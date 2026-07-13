@@ -88,7 +88,7 @@ V_calc = V[1]
 # Error relativo
 error = abs(V_real - V_calc)/V_real * 100
 
-print("\n========== RESULTADOS ==========")
+print("\n RESULTADOS ")
 
 print(f"Voltaje RK4 en t=2 s = {V_calc:.4f} V")
 print(f"Voltaje experimental = {V_real:.4f} V")
