@@ -9,12 +9,15 @@
 <title>Integración Numérica RC</title>
 
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 <style>
 
 
 body{
 
-font-family:Arial, sans-serif;
+font-family:Arial;
 
 background:#f4f6f8;
 
@@ -40,20 +43,25 @@ padding:25px;
 
 background:white;
 
-max-width:850px;
+width:900px;
 
-margin:40px auto;
+max-width:90%;
+
+margin:30px auto;
 
 padding:30px;
 
 border-radius:15px;
 
-box-shadow:0px 5px 15px rgba(0,0,0,0.15);
+box-shadow:0px 5px 15px #ccc;
 
 }
 
 
+
 button{
+
+padding:12px 25px;
 
 background:#00509e;
 
@@ -61,20 +69,12 @@ color:white;
 
 border:none;
 
-padding:12px 25px;
-
 border-radius:25px;
 
 cursor:pointer;
 
 }
 
-
-button:hover{
-
-background:#003366;
-
-}
 
 
 table{
@@ -90,18 +90,17 @@ td,th{
 
 border:1px solid #aaa;
 
-padding:8px;
+padding:8px 12px;
 
 }
 
 
+
 #resultado{
 
-margin-top:25px;
+margin:20px;
 
-font-size:20px;
-
-font-weight:bold;
+font-size:18px;
 
 color:#003366;
 
@@ -116,21 +115,28 @@ color:#003366;
 
 
 
+
 <body>
+
 
 
 
 <header>
 
+
 <h1>
 Integración Numérica
 </h1>
+
 
 <p>
 Regla del Trapecio Compuesta aplicada al circuito RC
 </p>
 
+
 </header>
+
+
 
 
 
@@ -140,15 +146,34 @@ Regla del Trapecio Compuesta aplicada al circuito RC
 
 
 <h2>
-Datos experimentales de carga
+Fundamento del método
 </h2>
+
 
 
 <p>
 
-Cálculo del área bajo la curva de voltaje entre 0 y 60 segundos.
+La integración numérica permite calcular áreas cuando solo se dispone de datos experimentales discretos.
+
+En este caso se aproxima el área bajo la curva del voltaje del capacitor durante la carga.
 
 </p>
+
+
+
+<h3>
+
+A = Σ ((Vi + Vi-1)/2) Δt
+
+</h3>
+
+
+
+
+
+<h2>
+Datos experimentales utilizados
+</h2>
 
 
 
@@ -158,37 +183,26 @@ Cálculo del área bajo la curva de voltaje entre 0 y 60 segundos.
 <tr>
 
 <th>
-Tiempo (s)
+Tiempo(s)
 </th>
 
 <th>
-Voltaje (V)
+Voltaje(V)
 </th>
+
 
 </tr>
 
 
+<tbody id="tablaDatos">
 
-<tr><td>0</td><td>0.000</td></tr>
-
-<tr><td>2</td><td>0.390</td></tr>
-
-<tr><td>5</td><td>1.630</td></tr>
-
-<tr><td>10</td><td>2.970</td></tr>
-
-<tr><td>20</td><td>4.150</td></tr>
-
-<tr><td>30</td><td>4.550</td></tr>
-
-<tr><td>60</td><td>4.830</td></tr>
+</tbody>
 
 
 </table>
 
 
 
-<br>
 
 
 <button onclick="calcular()">
@@ -199,8 +213,12 @@ Calcular integral
 
 
 
-
 <div id="resultado"></div>
+
+
+
+
+<canvas id="grafica"></canvas>
 
 
 
@@ -212,38 +230,96 @@ Calcular integral
 
 
 
+
 <script>
+
+
+
+let grafico;
+
+
+
+let tiempo=[
+
+0,2,5,10,20,30,60
+
+];
+
+
+
+let voltaje=[
+
+0.000,
+
+0.390,
+
+1.630,
+
+2.970,
+
+4.150,
+
+4.550,
+
+4.830
+
+];
+
+
+
+
+// llenar tabla
+
+
+let tabla=document.getElementById("tablaDatos");
+
+
+for(let i=0;i<tiempo.length;i++){
+
+
+tabla.innerHTML+=`
+
+<tr>
+
+<td>${tiempo[i]}</td>
+
+<td>${voltaje[i]}</td>
+
+</tr>
+
+
+`;
+
+}
+
+
+
+
 
 
 function calcular(){
 
 
 
-let t=[0,2,5,10,20,30,60];
-
-
-let V=[0.000,0.390,1.630,2.970,4.150,4.550,4.830];
-
-
-
 let area=0;
-
 
 
 let detalle="";
 
 
 
-
-for(let i=1;i<t.length;i++){
-
+for(let i=1;i<tiempo.length;i++){
 
 
-let h=t[i]-t[i-1];
+let h=
+
+tiempo[i]-tiempo[i-1];
 
 
 
-let Ai=((V[i-1]+V[i])*h)/2;
+let Ai=
+
+((voltaje[i]+voltaje[i-1])*h)/2;
 
 
 
@@ -251,11 +327,17 @@ area+=Ai;
 
 
 
-detalle += 
-"Intervalo "+t[i-1]+" - "+t[i]
-+" s : "
-+Ai.toFixed(3)
-+" V·s<br>";
+detalle+=
+
+`
+
+Intervalo ${tiempo[i-1]}-${tiempo[i]}s :
+
+${Ai.toFixed(3)} V·s
+
+<br>
+
+`;
 
 
 
@@ -264,17 +346,15 @@ detalle +=
 
 
 
-let tiempoTotal=60;
+
+
+let promedio=
+
+area/60;
 
 
 
-let promedio=area/tiempoTotal;
-
-
-
-
-
-// Integral teórica del modelo RC
+// valor teorico
 
 
 let Vmax=4.830;
@@ -283,17 +363,13 @@ let tau=10;
 
 
 
-let integralTeorica =
+let integralTeorica=
 
-Vmax*
+Vmax*(
 
-(
+60+
 
-tiempoTotal
-
-+
-
-tau*Math.exp(-tiempoTotal/tau)
+tau*Math.exp(-60/tau)
 
 -
 
@@ -303,12 +379,9 @@ tau
 
 
 
-
-
 let promedioTeorico=
 
-integralTeorica/tiempoTotal;
-
+integralTeorica/60;
 
 
 
@@ -325,36 +398,206 @@ promedioTeorico*100;
 
 
 
-document.getElementById("resultado").innerHTML=
 
+document.getElementById("resultado").innerHTML=
 
 `
 
 <h3>Resultados</h3>
 
-Área total = ${area.toFixed(3)} V·s
 
-<br>
+Área total:
 
-Voltaje promedio = ${promedio.toFixed(4)} V
+<b>${area.toFixed(3)} V·s</b>
 
-<br>
-
-Voltaje promedio teórico = ${promedioTeorico.toFixed(4)} V
-
-<br>
-
-Error relativo = ${error.toFixed(3)} %
 
 <br><br>
 
-<b>Detalle de cálculo:</b>
+
+Voltaje promedio:
+
+${promedio.toFixed(4)} V
+
+
+<br><br>
+
+
+Valor teórico:
+
+${promedioTeorico.toFixed(4)} V
+
+
+<br><br>
+
+
+Error relativo:
+
+${error.toFixed(3)} %
+
+
+<hr>
+
+
+Detalle de trapecios:
 
 <br>
 
 ${detalle}
 
+
 `;
+
+
+
+
+
+
+
+
+// generar curva
+
+
+let curva=[];
+
+
+for(let i=0;i<=60;i+=1){
+
+
+curva.push({
+
+x:i,
+
+y:Vmax*(1-Math.exp(-i/tau))
+
+});
+
+
+}
+
+
+
+
+
+
+if(grafico){
+
+grafico.destroy();
+
+}
+
+
+
+
+
+grafico=new Chart(
+
+document.getElementById("grafica"),
+
+{
+
+
+type:"line",
+
+
+
+data:{
+
+
+
+datasets:[
+
+
+{
+
+label:"Carga RC teórica",
+
+data:curva,
+
+borderWidth:3,
+
+fill:true
+
+},
+
+
+
+{
+
+label:"Datos experimentales Arduino",
+
+data:tiempo.map((x,i)=>({
+
+x:x,
+
+y:voltaje[i]
+
+})),
+
+type:"scatter",
+
+pointRadius:6
+
+}
+
+
+
+]
+
+
+},
+
+
+
+
+options:{
+
+
+scales:{
+
+
+x:{
+
+title:{
+
+display:true,
+
+text:"Tiempo(s)"
+
+}
+
+},
+
+
+y:{
+
+title:{
+
+display:true,
+
+text:"Voltaje(V)"
+
+},
+
+min:0,
+
+max:5
+
+}
+
+
+}
+
+
+
+}
+
+
+
+}
+
+
+
+);
 
 
 
@@ -363,7 +606,6 @@ ${detalle}
 
 
 </script>
-
 
 
 
