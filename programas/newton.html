@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Newton-Raphson Circuito RC</title>
+
+
+<style>
+
+body{
+
+font-family:Arial, sans-serif;
+
+background:#f4f6f8;
+
+text-align:center;
+
+margin:0;
+
+}
+
+
+header{
+
+background:#003366;
+
+color:white;
+
+padding:25px;
+
+}
+
+
+.card{
+
+background:white;
+
+max-width:700px;
+
+margin:40px auto;
+
+padding:30px;
+
+border-radius:15px;
+
+box-shadow:0px 5px 15px rgba(0,0,0,0.15);
+
+}
+
+
+input{
+
+padding:10px;
+
+margin:5px;
+
+width:120px;
+
+}
+
+
+button{
+
+background:#00509e;
+
+color:white;
+
+border:none;
+
+padding:12px 25px;
+
+border-radius:25px;
+
+cursor:pointer;
+
+}
+
+
+button:hover{
+
+background:#003366;
+
+}
+
+
+#resultado{
+
+margin-top:25px;
+
+font-size:20px;
+
+font-weight:bold;
+
+color:#003366;
+
+}
+
+
+table{
+
+margin:20px auto;
+
+border-collapse:collapse;
+
+}
+
+
+td,th{
+
+border:1px solid #aaa;
+
+padding:8px;
+
+}
+
+
+</style>
+
+
+</head>
+
+
+
+<body>
+
+
+
+<header>
+
+<h1>
+Método Newton-Raphson
+</h1>
+
+<p>
+Cálculo del tiempo donde el capacitor alcanza un voltaje objetivo
+</p>
+
+</header>
+
+
+
+<div class="card">
+
+
+<h2>
+Parámetros del circuito RC
+</h2>
+
+
+<p>
+Ingrese los valores del modelo de carga:
+</p>
+
+
+
+<label>
+Voltaje máximo:
+</label>
+
+<input id="Vmax" type="number" value="4.830">
+
+<br>
+
+
+<label>
+Constante RC (τ):
+</label>
+
+<input id="tau" type="number" value="10">
+
+
+<br>
+
+
+<label>
+Voltaje objetivo:
+</label>
+
+<input id="Vobj" type="number" value="4.000">
+
+
+<br>
+
+
+<label>
+Valor inicial:
+</label>
+
+<input id="t0" type="number" value="15">
+
+
+<br><br>
+
+
+
+<button onclick="calcular()">
+
+Calcular
+
+</button>
+
+
+
+<div id="resultado"></div>
+
+
+
+<table id="tabla">
+
+<tr>
+
+<th>
+Iteración
+</th>
+
+<th>
+Tiempo (s)
+</th>
+
+<th>
+Error
+</th>
+
+</tr>
+
+
+</table>
+
+
+
+</div>
+
+
+
+
+
+<script>
+
+
+function calcular(){
+
+
+
+let Vmax =
+Number(document.getElementById("Vmax").value);
+
+
+let tau =
+Number(document.getElementById("tau").value);
+
+
+let Vobj =
+Number(document.getElementById("Vobj").value);
+
+
+
+let t =
+Number(document.getElementById("t0").value);
+
+
+
+let tolerancia = 0.0001;
+
+
+let maxIter = 20;
+
+
+
+let tabla =
+document.getElementById("tabla");
+
+
+
+tabla.innerHTML =
+
+`
+<tr>
+<th>Iteración</th>
+<th>Tiempo (s)</th>
+<th>Error</th>
+</tr>
+`;
+
+
+
+
+
+function f(t){
+
+return Vmax*(1-Math.exp(-t/tau))-Vobj;
+
+}
+
+
+
+
+function df(t){
+
+return (Vmax/tau)*Math.exp(-t/tau);
+
+}
+
+
+
+
+for(let i=0;i<maxIter;i++){
+
+
+
+let nuevo = t - f(t)/df(t);
+
+
+let error = Math.abs(nuevo-t);
+
+
+
+let fila = tabla.insertRow();
+
+
+
+fila.insertCell(0).innerHTML=i+1;
+
+fila.insertCell(1).innerHTML=nuevo.toFixed(6);
+
+fila.insertCell(2).innerHTML=error.toFixed(6);
+
+
+
+t=nuevo;
+
+
+
+if(error<tolerancia){
+
+break;
+
+}
+
+
+}
+
+
+
+
+
+document.getElementById("resultado").innerHTML=
+
+"Tiempo calculado = "
++t.toFixed(4)
++" segundos";
+
+
+
+}
+
+
+</script>
+
+
+
+</body>
+
+</html>
