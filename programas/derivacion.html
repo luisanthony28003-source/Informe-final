@@ -6,14 +6,10 @@
 
 <meta charset="UTF-8">
 
-<title>Derivación Numérica RC</title>
-
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>Integración Numérica RC</title>
 
 
 <style>
-
 
 body{
 
@@ -23,22 +19,7 @@ background:#f4f6f8;
 
 text-align:center;
 
-margin:0;
-
 }
-
-
-
-header{
-
-background:#003366;
-
-color:white;
-
-padding:25px;
-
-}
-
 
 
 .card{
@@ -49,7 +30,7 @@ width:850px;
 
 max-width:90%;
 
-margin:30px auto;
+margin:40px auto;
 
 padding:30px;
 
@@ -58,7 +39,6 @@ border-radius:15px;
 box-shadow:0px 5px 15px #ccc;
 
 }
-
 
 
 button{
@@ -71,7 +51,7 @@ color:white;
 
 border:none;
 
-border-radius:25px;
+border-radius:20px;
 
 cursor:pointer;
 
@@ -79,22 +59,41 @@ cursor:pointer;
 
 
 
-#resultado{
+table{
 
-margin:20px;
+margin:20px auto;
 
-font-size:18px;
-
-color:#003366;
+border-collapse:collapse;
 
 }
 
 
 
+th,td{
+
+border:1px solid #aaa;
+
+padding:8px 15px;
+
+}
+
+
+
+#resultado{
+
+text-align:left;
+
+line-height:1.7;
+
+margin-top:25px;
+
+}
+
+
 </style>
 
-</head>
 
+</head>
 
 
 
@@ -102,78 +101,87 @@ color:#003366;
 
 
 
-<header>
-
-<h1>
-Derivación Numérica
-</h1>
-
-
-<p>
-Cálculo de la variación del voltaje del capacitor mediante diferencias finitas centradas
-</p>
-
-
-</header>
-
-
-
-
-
 <div class="card">
 
 
+
+<h1>
+Integración Numérica
+</h1>
+
+
+
 <h2>
-Fundamento del método
+Regla del Trapecio Compuesta
 </h2>
 
 
 
 <p>
 
-La derivación numérica permite aproximar la rapidez de cambio de una variable cuando solamente se tienen datos experimentales discretos.
+La integración numérica permite calcular el área bajo una curva cuando solamente se tienen datos experimentales discretos.
 
-Para el circuito RC se calcula la pendiente del voltaje en:
+En este caso se calcula la energía acumulada representada mediante la integral del voltaje del capacitor durante la carga.
 
 </p>
 
 
 
 <h3>
-t = 30 segundos
+
+A = Σ ((V<sub>i</sub> + V<sub>i-1</sub>)/2) Δt
+
 </h3>
 
 
-
-<p>
-
-Utilizando:
-
-</p>
 
 
 <h3>
-
-dV/dt = (V(t+h)-V(t-h))/(2h)
-
+Datos experimentales utilizados
 </h3>
+
+
+
+<table>
+
+
+<tr>
+
+<th>
+Tiempo (s)
+</th>
+
+<th>
+Voltaje (V)
+</th>
+
+</tr>
+
+
+<tr><td>0</td><td>0.000</td></tr>
+<tr><td>2</td><td>0.390</td></tr>
+<tr><td>5</td><td>1.630</td></tr>
+<tr><td>10</td><td>2.970</td></tr>
+<tr><td>20</td><td>4.150</td></tr>
+<tr><td>30</td><td>4.550</td></tr>
+<tr><td>60</td><td>4.830</td></tr>
+
+
+</table>
+
 
 
 
 <button onclick="calcular()">
 
-Calcular derivada
+Calcular integral
 
 </button>
 
 
 
-
 <div id="resultado"></div>
 
-
-
-<canvas id="grafica"></canvas>
 
 
 
@@ -188,50 +196,44 @@ Calcular derivada
 <script>
 
 
-let grafico;
-
-
 
 function calcular(){
 
 
 
-// Datos experimentales completos
+let t=[
 
+0,
 
-let tiempo=[
+2,
 
-0,1,2,3,4,5,6,7,8,9,
+5,
 
-10,11,12,13,14,15,
+10,
 
-16,17,18,19,20,21,22,
+20,
 
-23,24,25,30,40,59,122
+30,
+
+60
 
 ];
 
 
 
-let voltaje=[
+let V=[
 
-0,0,0.390,0.840,1.290,
+0.000,
 
-1.630,1.960,2.300,
+0.390,
 
-2.530,2.750,2.970,
+1.630,
 
-3.140,3.310,3.480,
+2.970,
 
-3.650,3.760,3.870,
+4.150,
 
-3.930,3.980,4.040,
-
-4.150,4.210,4.270,
-
-4.320,4.380,4.430,
-
-4.550,4.710,4.830,
+4.550,
 
 4.830
 
@@ -241,44 +243,114 @@ let voltaje=[
 
 
 
-// Valores para diferencia centrada
-
-
-let h=10;
-
-
-let Vanterior=4.150;
-
-
-let Vposterior=4.710;
+let area=0;
 
 
 
-let derivada=
-
-(Vposterior-Vanterior)/(2*h);
+let detalle="";
 
 
 
 
 
-// Derivada teorica
+
+for(let i=1;i<t.length;i++){
+
+
+
+let h=t[i]-t[i-1];
+
+
+
+let areaParcial=
+
+((V[i]+V[i-1])*h)/2;
+
+
+
+area+=areaParcial;
+
+
+
+detalle+=
+
+`
+
+<b>Intervalo ${t[i-1]} s a ${t[i]} s</b>
+
+<br>
+
+Δt = ${h} s
+
+<br>
+
+Área parcial = ${areaParcial.toFixed(4)} V·s
+
+<br><br>
+
+`;
+
+
+
+}
+
+
+
+
+
+
+
+let promedio=
+
+area/60;
+
+
+
+
+
+// Modelo teorico
 
 
 let Vmax=4.830;
 
+
 let tau=10;
 
 
-let teorica=
 
-(Vmax/tau)*Math.exp(-30/tau);
+let integralTeorica=
+
+Vmax*
+
+(
+
+60+
+
+tau*Math.exp(-60/tau)
+
+-tau
+
+);
+
+
+
+
+let promedioTeorico=
+
+integralTeorica/60;
+
+
 
 
 
 let error=
 
-Math.abs(teorica-derivada)/teorica*100;
+Math.abs(promedio-promedioTeorico)
+
+/
+
+promedioTeorico*100;
+
 
 
 
@@ -290,260 +362,99 @@ document.getElementById("resultado").innerHTML=
 
 `
 
-<h3>Resultados</h3>
+<h2>
 
-Derivada numérica:
+Resultados obtenidos
 
-<b>${derivada.toFixed(5)} V/s</b>
+</h2>
 
-<br><br>
 
-Derivada teórica:
 
-${teorica.toFixed(5)} V/s
+<p>
 
-<br><br>
+El área calculada mediante la suma de trapecios representa la integral aproximada del voltaje del capacitor durante los primeros 60 segundos.
+
+</p>
+
+
+
+<h3>
+
+Área total:
+
+<br>
+
+${area.toFixed(4)} V·s
+
+</h3>
+
+
+
+
+<p>
+
+Voltaje promedio experimental:
+
+<br>
+
+<b>${promedio.toFixed(4)} V</b>
+
+
+</p>
+
+
+
+
+<p>
+
+Voltaje promedio teórico:
+
+<br>
+
+${promedioTeorico.toFixed(4)} V
+
+</p>
+
+
+
+
+<p>
 
 Error relativo:
 
-${error.toFixed(3)} %
-
-<br><br>
-
-Usando:
-
 <br>
 
-V(20s)=4.150V
+<b>${error.toFixed(3)} %</b>
 
-<br>
+</p>
 
-V(40s)=4.710V
+
+
+<hr>
+
+
+
+<h3>
+
+Cálculo de áreas parciales
+
+</h3>
+
+
+
+${detalle}
+
+
+
+<p>
+
+El bajo error obtenido indica que la regla del trapecio permite aproximar adecuadamente la evolución temporal del voltaje del capacitor usando únicamente mediciones discretas.
+
+</p>
+
 
 `;
 
-
-
-
-
-
-
-// Curva experimental
-
-
-let puntosExperimental=
-
-
-tiempo.map((t,i)=>({
-
-x:t,
-
-y:voltaje[i]
-
-}));
-
-
-
-
-// Curva teorica
-
-
-let curva=[];
-
-
-for(let i=0;i<=60;i+=0.5){
-
-
-curva.push({
-
-x:i,
-
-y:Vmax*(1-Math.exp(-i/tau))
-
-});
-
-
-}
-
-
-
-
-// Punto central
-
-
-let V30=
-
-Vmax*(1-Math.exp(-30/tau));
-
-
-
-
-// Recta tangente
-
-
-let recta=[];
-
-
-for(let x=10;x<=50;x+=1){
-
-
-recta.push({
-
-x:x,
-
-y:V30+derivada*(x-30)
-
-});
-
-
-}
-
-
-
-
-
-
-if(grafico){
-
-grafico.destroy();
-
-}
-
-
-
-
-grafico=new Chart(
-
-document.getElementById("grafica"),
-
-{
-
-
-type:"line",
-
-
-data:{
-
-
-datasets:[
-
-
-
-{
-
-label:"Carga RC teórica",
-
-data:curva,
-
-borderWidth:3,
-
-pointRadius:0
-
-},
-
-
-
-{
-
-label:"Datos Arduino",
-
-data:puntosExperimental,
-
-type:"scatter",
-
-pointRadius:5
-
-},
-
-
-
-{
-
-label:"Tangente en t=30s",
-
-data:recta,
-
-borderWidth:2
-
-},
-
-
-
-{
-
-label:"Punto t=30s",
-
-data:[{
-
-x:30,
-
-y:V30
-
-}],
-
-type:"scatter",
-
-pointRadius:8
-
-}
-
-
-
-]
-
-
-},
-
-
-
-options:{
-
-
-scales:{
-
-
-x:{
-
-title:{
-
-display:true,
-
-text:"Tiempo(s)"
-
-}
-
-},
-
-
-y:{
-
-title:{
-
-display:true,
-
-text:"Voltaje(V)"
-
-},
-
-min:0,
-
-max:5
-
-}
-
-
-}
-
-
-}
-
-
-
-}
-
-
-
-);
 
 
 }
