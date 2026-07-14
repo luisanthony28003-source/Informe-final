@@ -6,14 +6,14 @@
 
 <meta charset="UTF-8">
 
-<title>Runge Kutta 4 - Circuito RC</title>
+<title>Runge-Kutta 4 - Circuito RC</title>
 
 
 <style>
 
 body{
 
-font-family:Arial;
+font-family:Arial, sans-serif;
 
 background:#f4f6f8;
 
@@ -47,14 +47,14 @@ padding:8px;
 
 margin:5px;
 
-width:120px;
+width:130px;
 
 }
 
 
 button{
 
-padding:10px 25px;
+padding:12px 25px;
 
 background:#00509e;
 
@@ -69,6 +69,13 @@ cursor:pointer;
 }
 
 
+button:hover{
+
+background:#003f7d;
+
+}
+
+
 
 table{
 
@@ -79,11 +86,12 @@ border-collapse:collapse;
 }
 
 
-td,th{
+
+th,td{
 
 border:1px solid #aaa;
 
-padding:8px;
+padding:8px 15px;
 
 }
 
@@ -103,7 +111,7 @@ color:white;
 
 margin-top:20px;
 
-text-align:left;
+text-align:center;
 
 line-height:1.6;
 
@@ -116,8 +124,8 @@ line-height:1.6;
 </head>
 
 
-
 <body>
+
 
 
 <div class="card">
@@ -130,13 +138,14 @@ Método Runge-Kutta de Cuarto Orden
 
 <p>
 
-Simulación de la descarga de un capacitor en un circuito RC.
+Simulación de la descarga de un capacitor en un circuito RC mediante un método numérico.
 
 </p>
 
 
+
 <h3>
-Ecuación del sistema
+Modelo matemático
 </h3>
 
 
@@ -153,15 +162,16 @@ dV/dt = -V/(R*C)
 
 
 <h3>
-Parámetros
+Datos del circuito
 </h3>
+
 
 
 Voltaje inicial:
 
 <br>
 
-<input id="V0" value="4.83" type="number">
+<input id="V0" type="number" value="4.83">
 
 V
 
@@ -169,11 +179,12 @@ V
 <br>
 
 
+
 Resistencia:
 
 <br>
 
-<input id="R" value="10000" type="number">
+<input id="R" type="number" value="10000">
 
 Ω
 
@@ -181,11 +192,12 @@ Resistencia:
 <br>
 
 
+
 Capacitancia:
 
 <br>
 
-<input id="C" value="0.001" type="number">
+<input id="C" type="number" value="0.001">
 
 F
 
@@ -193,16 +205,19 @@ F
 <br>
 
 
-Tiempo final:
+
+Tiempo de simulación:
 
 <br>
 
-<input id="tf" value="60" type="number">
+<input id="tf" type="number" value="60">
 
 s
 
 
+
 <br><br>
+
 
 
 <button onclick="calcular()">
@@ -213,7 +228,9 @@ Calcular RK4
 
 
 
+
 <div id="resultado"></div>
+
 
 
 </div>
@@ -229,39 +246,25 @@ function calcular(){
 
 
 
-let V0=
+let V0 = Number(document.getElementById("V0").value);
 
-Number(document.getElementById("V0").value);
+let R = Number(document.getElementById("R").value);
 
+let C = Number(document.getElementById("C").value);
 
-
-let R=
-
-Number(document.getElementById("R").value);
+let tf = Number(document.getElementById("tf").value);
 
 
 
-let C=
-
-Number(document.getElementById("C").value);
+let h = 1;
 
 
 
-let tf=
-
-Number(document.getElementById("tf").value);
+let tau = R*C;
 
 
 
-let h=2;
-
-
-
-let tau=R*C;
-
-
-
-let V=V0;
+let V = V0;
 
 
 
@@ -270,6 +273,8 @@ let tabla="";
 
 
 
+
+// Ecuación diferencial
 
 function f(V){
 
@@ -281,40 +286,18 @@ return -V/tau;
 
 
 
+// Método RK4
+
+
 for(let t=0;t<=tf;t+=h){
 
 
 
-let inicial=V;
+// Guardar valor actual
 
+tabla +=
 
-
-let k1=f(V);
-
-
-
-let k2=f(V+h*k1/2);
-
-
-
-let k3=f(V+h*k2/2);
-
-
-
-let k4=f(V+h*k3);
-
-
-
-
-V=V+(h/6)*(k1+2*k2+2*k3+k4);
-
-
-
-
-if(t%10==0){
-
-
-tabla+=`
+`
 
 <tr>
 
@@ -327,44 +310,113 @@ tabla+=`
 `;
 
 
-}
+
+
+// Calculo de pendientes
+
+let k1=f(V);
+
+
+
+let k2=f(V+(h*k1)/2);
+
+
+
+let k3=f(V+(h*k2)/2);
+
+
+
+let k4=f(V+h*k3);
+
+
+
+
+// Actualización RK4
+
+V = V +
+
+(h/6)*(
+
+k1+
+
+2*k2+
+
+2*k3+
+
+k4
+
+);
 
 
 
 }
+
 
 
 
 
 document.getElementById("resultado").innerHTML=
 
+
 `
 
-<h3>Resultado</h3>
+<h2>
+Resultados
+</h2>
 
 
 <p>
 
-Constante de tiempo:
-
 <b>
-
-τ = ${tau.toFixed(2)} s
+Constante de tiempo:
 
 </b>
 
+<br>
+
+τ = R × C = ${tau.toFixed(3)} segundos
+
 </p>
+
 
 
 <p>
 
-El método RK4 calculó la evolución del voltaje del capacitor resolviendo la ecuación diferencial de descarga.
+<b>
+Método utilizado:
+</b>
+
+<br>
+
+Runge-Kutta de cuarto orden (RK4)
 
 </p>
+
+
+
+<p>
+
+<b>
+Ecuación resuelta:
+</b>
+
+<br>
+
+dV/dt = -V/(R*C)
+
+</p>
+
+
+
+
+<h3>
+Tabla de descarga simulada
+</h3>
 
 
 
 <table>
+
 
 <tr>
 
@@ -372,9 +424,11 @@ El método RK4 calculó la evolución del voltaje del capacitor resolviendo la e
 Tiempo (s)
 </th>
 
+
 <th>
 Voltaje (V)
 </th>
+
 
 </tr>
 
@@ -386,13 +440,23 @@ ${tabla}
 
 
 
+
 <p>
 
-<b>Interpretación:</b>
+<b>
+Interpretación:</b>
 
 <br>
 
-El voltaje disminuye progresivamente debido a la descarga de energía almacenada en el capacitor. El método RK4 permite aproximar este comportamiento mediante pasos sucesivos de cálculo.
+El método RK4 aproxima la descarga del capacitor calculando la evolución del voltaje en pequeños intervalos de tiempo.
+
+</p>
+
+
+
+<p>
+
+El resultado representa el comportamiento exponencial decreciente esperado en un circuito RC real.
 
 </p>
 
@@ -408,6 +472,5 @@ El voltaje disminuye progresivamente debido a la descarga de energía almacenada
 
 
 </body>
-
 
 </html>
