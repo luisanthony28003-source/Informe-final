@@ -1,1 +1,192 @@
+<!DOCTYPE html>
 
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Interpolación Newton</title>
+
+
+<style>
+
+body{
+
+font-family:Arial;
+background:#f4f6f8;
+text-align:center;
+
+}
+
+
+.card{
+
+background:white;
+width:600px;
+margin:40px auto;
+padding:30px;
+border-radius:10px;
+box-shadow:0px 0px 10px #ccc;
+
+}
+
+
+input{
+
+padding:8px;
+margin:5px;
+width:100px;
+
+}
+
+
+button{
+
+padding:12px 25px;
+background:#00509e;
+color:white;
+border:none;
+border-radius:5px;
+
+}
+
+
+#resultado{
+
+margin-top:20px;
+font-size:20px;
+font-weight:bold;
+
+}
+
+
+</style>
+
+
+</head>
+
+
+
+<body>
+
+
+<div class="card">
+
+
+<h1>
+Interpolación de Newton de Segundo Orden
+</h1>
+
+
+<p>
+Estimación del voltaje del capacitor usando datos experimentales.
+</p>
+
+
+
+<h3>Datos</h3>
+
+
+<input id="t1" value="15" type="number">
+<input id="v1" value="3.760" type="number">
+
+<br>
+
+
+<input id="t2" value="20" type="number">
+<input id="v2" value="4.150" type="number">
+
+<br>
+
+
+<input id="t3" value="30" type="number">
+<input id="v3" value="4.550" type="number">
+
+<br><br>
+
+
+Tiempo a calcular:
+
+<input id="tx" value="25" type="number">
+
+
+<br><br>
+
+
+<button onclick="calcular()">
+Calcular
+</button>
+
+
+
+<div id="resultado"></div>
+
+
+
+</div>
+
+
+
+<script>
+
+
+function calcular(){
+
+
+let t=[
+Number(document.getElementById("t1").value),
+Number(document.getElementById("t2").value),
+Number(document.getElementById("t3").value)
+];
+
+
+let V=[
+Number(document.getElementById("v1").value),
+Number(document.getElementById("v2").value),
+Number(document.getElementById("v3").value)
+];
+
+
+let x=
+Number(document.getElementById("tx").value);
+
+
+
+let b0=V[0];
+
+
+let b1=(V[1]-V[0])/(t[1]-t[0]);
+
+
+let f12=(V[2]-V[1])/(t[2]-t[1]);
+
+
+let b2=(f12-b1)/(t[2]-t[0]);
+
+
+
+let resultado=
+b0+
+b1*(x-t[0])+
+b2*(x-t[0])*(x-t[1]);
+
+
+
+document.getElementById("resultado").innerHTML=
+
+"Voltaje estimado = "
++ resultado.toFixed(4)
++" V";
+
+
+}
+
+
+</script>
+
+
+
+</body>
+
+</html>
