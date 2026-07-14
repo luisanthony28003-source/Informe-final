@@ -6,14 +6,14 @@
 
 <meta charset="UTF-8">
 
-<title>RK4 - Descarga Circuito RC</title>
+<title>RK4 - Descarga RC Experimental</title>
 
 
 <style>
 
 body{
 
-font-family:Arial, sans-serif;
+font-family:Arial,sans-serif;
 
 background:#f4f6f8;
 
@@ -26,7 +26,7 @@ text-align:center;
 
 background:white;
 
-width:700px;
+width:750px;
 
 max-width:90%;
 
@@ -36,20 +36,22 @@ padding:30px;
 
 border-radius:15px;
 
-box-shadow:0px 0px 10px #ccc;
+box-shadow:0 0 10px #ccc;
 
 }
+
 
 
 input{
 
 padding:8px;
 
-margin:5px;
+margin:6px;
 
 width:150px;
 
 }
+
 
 
 button{
@@ -69,9 +71,32 @@ cursor:pointer;
 }
 
 
-button:hover{
 
-background:#003f7d;
+table{
+
+margin:20px auto;
+
+border-collapse:collapse;
+
+}
+
+
+
+td,th{
+
+border:1px solid #aaa;
+
+padding:8px 15px;
+
+}
+
+
+
+th{
+
+background:#00509e;
+
+color:white;
 
 }
 
@@ -81,9 +106,7 @@ background:#003f7d;
 
 margin-top:25px;
 
-line-height:1.7;
-
-text-align:left;
+line-height:1.6;
 
 }
 
@@ -95,7 +118,6 @@ text-align:left;
 </head>
 
 
-
 <body>
 
 
@@ -103,19 +125,21 @@ text-align:left;
 <div class="card">
 
 
+
 <h1>
 Método Runge-Kutta de Cuarto Orden
 </h1>
 
 
+
 <h3>
-Descarga de un capacitor en un circuito RC
+Descarga experimental de un capacitor RC
 </h3>
 
 
 <p>
 
-El método RK4 permite calcular el voltaje del capacitor durante la descarga resolviendo la ecuación diferencial del circuito.
+El método RK4 permite aproximar el voltaje del capacitor durante la descarga utilizando la constante de tiempo obtenida experimentalmente.
 
 </p>
 
@@ -123,12 +147,13 @@ El método RK4 permite calcular el voltaje del capacitor durante la descarga res
 
 <h3>
 Modelo matemático
+
 </h3>
 
 
 <p>
 
-dV/dt = -V/(R × C)
+dV/dt = -V/τ
 
 </p>
 
@@ -139,16 +164,17 @@ dV/dt = -V/(R × C)
 
 
 <h3>
-Datos del circuito
+Datos de entrada
+
 </h3>
 
 
 
-Voltaje inicial del capacitor:
+Voltaje inicial experimental:
 
 <br>
 
-<input id="V0" type="number" value="4.830">
+<input id="V0" value="4.830" type="number">
 
 V
 
@@ -156,35 +182,12 @@ V
 <br>
 
 
-Resistencia:
+
+Constante de tiempo experimental:
 
 <br>
 
-<input id="R" type="number" value="10000">
-
-Ω
-
-
-<br>
-
-
-Capacitancia:
-
-<br>
-
-<input id="C" type="number" value="0.001">
-
-F
-
-
-<br>
-
-
-Tiempo donde desea calcular:
-
-<br>
-
-<input id="tiempo" type="number" value="10">
+<input id="tau" value="18" type="number">
 
 s
 
@@ -192,11 +195,25 @@ s
 <br>
 
 
-Paso de cálculo:
+
+Tiempo donde desea calcular:
 
 <br>
 
-<input id="h" type="number" value="1">
+<input id="tiempo" value="10" type="number">
+
+s
+
+
+<br>
+
+
+
+Paso RK4:
+
+<br>
+
+<input id="h" value="1" type="number">
 
 s
 
@@ -205,9 +222,10 @@ s
 <br><br>
 
 
+
 <button onclick="calcular()">
 
-Calcular voltaje
+Calcular RK4
 
 </button>
 
@@ -232,28 +250,44 @@ function calcular(){
 
 
 
-let V = Number(document.getElementById("V0").value);
+let V0=
 
-let R = Number(document.getElementById("R").value);
-
-let C = Number(document.getElementById("C").value);
-
-let tiempo = Number(document.getElementById("tiempo").value);
-
-let h = Number(document.getElementById("h").value);
+Number(document.getElementById("V0").value);
 
 
 
+let tau=
 
-
-// Constante de tiempo
-
-let tau = R*C;
-
+Number(document.getElementById("tau").value);
 
 
 
-// Ecuación diferencial de descarga
+let tiempo=
+
+Number(document.getElementById("tiempo").value);
+
+
+
+let h=
+
+Number(document.getElementById("h").value);
+
+
+
+let V=V0;
+
+
+
+let t=0;
+
+
+
+let tabla="";
+
+
+
+
+// Ecuación diferencial
 
 function f(V){
 
@@ -264,28 +298,15 @@ return -V/tau;
 
 
 
-let t=0;
-
-let tabla="";
-
-
-
-
 // Método RK4
 
 while(t < tiempo){
 
 
 
-if(t+h > tiempo){
+tabla +=
 
-h = tiempo-t;
-
-}
-
-
-
-tabla += `
+`
 
 <tr>
 
@@ -296,6 +317,15 @@ tabla += `
 </tr>
 
 `;
+
+
+
+
+if(t+h > tiempo){
+
+h=tiempo-t;
+
+}
 
 
 
@@ -317,10 +347,9 @@ let k4=f(V+h*k3);
 
 
 
+V=
 
-V = V + 
-
-(h/6)*(
+V+(h/6)*(
 
 k1+
 
@@ -342,10 +371,11 @@ t=t+h;
 
 
 
+// Punto final
 
-// Agregar punto final
+tabla +=
 
-tabla += `
+`
 
 <tr>
 
@@ -373,23 +403,14 @@ Resultado RK4
 
 <p>
 
-<b>Ecuación diferencial:</b>
+<b>
+Constante de tiempo experimental:
+
+</b>
 
 <br>
 
-dV/dt = -V/(R × C)
-
-</p>
-
-
-
-<p>
-
-<b>Constante de tiempo:</b>
-
-<br>
-
-τ = R × C = ${tau.toFixed(3)} s
+τ = ${tau} s
 
 </p>
 
@@ -398,11 +419,14 @@ dV/dt = -V/(R × C)
 
 <p>
 
-<b>Voltaje inicial:</b>
+<b>
+Voltaje inicial:
+
+</b>
 
 <br>
 
-V0 = ${Number(document.getElementById("V0").value).toFixed(3)} V
+V0 = ${V0} V
 
 </p>
 
@@ -411,27 +435,29 @@ V0 = ${Number(document.getElementById("V0").value).toFixed(3)} V
 
 <p>
 
-<b>Voltaje calculado durante la descarga:</b>
+<b>
+Voltaje calculado:
+
+</b>
 
 <br><br>
 
-V(${tiempo}s) = 
+V(${tiempo}s)=
 
-<b>${V.toFixed(4)} V</b>
+<strong>${V.toFixed(4)} V</strong>
 
 </p>
-
 
 
 
 
 <h3>
-Proceso de aproximación RK4
+Proceso de aproximación
+
 </h3>
 
 
-
-<table border="1" style="margin:auto;border-collapse:collapse">
+<table>
 
 <tr>
 
@@ -439,8 +465,9 @@ Proceso de aproximación RK4
 Tiempo (s)
 </th>
 
+
 <th>
-Voltaje (V)
+Voltaje RK4 (V)
 </th>
 
 </tr>
@@ -454,27 +481,24 @@ ${tabla}
 
 
 
-
 <h3>
 Interpretación
+
 </h3>
 
 
-
 <p>
 
-El método Runge-Kutta de cuarto orden aproxima el comportamiento de descarga del capacitor calculando la variación del voltaje en pequeños intervalos de tiempo.
+El método Runge-Kutta de cuarto orden permite resolver numéricamente la ecuación diferencial de descarga del capacitor.
 
 </p>
 
 
-
 <p>
 
-El resultado representa la disminución progresiva de la energía almacenada en el capacitor a través de la resistencia del circuito RC.
+La constante de tiempo utilizada fue obtenida a partir de los datos experimentales del circuito RC, permitiendo que la simulación represente mejor el comportamiento medido mediante Arduino.
 
 </p>
-
 
 
 `;
@@ -482,6 +506,7 @@ El resultado representa la disminución progresiva de la energía almacenada en 
 
 
 }
+
 
 
 </script>
