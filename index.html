@@ -1,0 +1,21 @@
+let R=parseFloat(document.getElementById("R").value);
+
+let C=parseFloat(document.getElementById("C").value);
+
+let t=parseFloat(document.getElementById("t").value);
+
+let V0=5;
+
+let V=V0*Math.exp(-t/(R*C));
+
+document.getElementById("resultado").innerHTML=
+
+"Voltaje = "+V.toFixed(4)+" V";
+
+}
+
+</script>
+
+</body>
+
+</html>
