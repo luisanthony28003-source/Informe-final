@@ -24,27 +24,23 @@ let datosV=[
 ];
 
 
+// Tiempo solicitado
 
-// tiempo solicitado
-
-let x =
-Number(document.getElementById("tx").value);
+let x = Number(document.getElementById("tx").value);
 
 
 
+// Buscar los tres nodos mas cercanos
 
-// Buscar los 3 nodos más cercanos
-
-
-let indices=[];
+let nodos=[];
 
 
 for(let i=0;i<datosT.length;i++){
 
-indices.push({
+nodos.push({
 
-indice:i,
-
+t:datosT[i],
+V:datosV[i],
 distancia:Math.abs(datosT[i]-x)
 
 });
@@ -53,43 +49,35 @@ distancia:Math.abs(datosT[i]-x)
 
 
 
-indices.sort((a,b)=>a.distancia-b.distancia);
+nodos.sort((a,b)=>a.distancia-b.distancia);
 
 
 
-
-let i1=indices[0].indice;
-let i2=indices[1].indice;
-let i3=indices[2].indice;
-
-
+// Guardar los 3 nodos
 
 let t=[
-
-datosT[i1],
-datosT[i2],
-datosT[i3]
-
+nodos[0].t,
+nodos[1].t,
+nodos[2].t
 ];
 
 
 let V=[
-
-datosV[i1],
-datosV[i2],
-datosV[i3]
-
+nodos[0].V,
+nodos[1].V,
+nodos[2].V
 ];
 
 
 
-// Ordenar nodos por tiempo
+// Ordenar por tiempo
 
 for(let i=0;i<3;i++){
 
 for(let j=i+1;j<3;j++){
 
 if(t[i]>t[j]){
+
 
 let aux=t[i];
 t[i]=t[j];
@@ -100,11 +88,13 @@ aux=V[i];
 V[i]=V[j];
 V[j]=aux;
 
-}
 
 }
 
 }
+
+}
+
 
 
 
@@ -126,17 +116,20 @@ let b2=(f12-b1)/(t[2]-t[0]);
 
 
 
-function P(x){
+
+function P(valor){
 
 
-return b0+
-
-b1*(x-t[0])+
-
-b2*(x-t[0])*(x-t[1]);
+return b0
++
+b1*(valor-t[0])
++
+b2*(valor-t[0])*(valor-t[1]);
 
 
 }
+
+
 
 
 
@@ -144,33 +137,46 @@ let resultado=P(x);
 
 
 
+
+// Mostrar resultados
+
+
 document.getElementById("resultado").innerHTML=
 
 `
 
-<b>Resultado de interpolación</b>
+<h3>Resultado de interpolación</h3>
+
+
+Voltaje estimado:
+
+<br>
+
+<b>
+
+V(${x}s)= ${resultado.toFixed(4)} V
+
+</b>
+
 
 <br><br>
 
-Voltaje estimado en t=${x}s :
-
-${resultado.toFixed(4)} V
-
-<br><br>
 
 Nodos utilizados:
 
-<br>
 
-(${t[0]}s , ${V[0]}V)
+<br><br>
 
-<br>
 
-(${t[1]}s , ${V[1]}V)
+(${t[0]} s , ${V[0]} V)
 
 <br>
 
-(${t[2]}s , ${V[2]}V)
+(${t[1]} s , ${V[1]} V)
+
+<br>
+
+(${t[2]} s , ${V[2]} V)
 
 `;
 
@@ -178,13 +184,20 @@ Nodos utilizados:
 
 
 
-// Crear curva interpolada cercana
+
+// Crear curva solo alrededor de los nodos
 
 
 let curva=[];
 
 
-for(let tiempo=0; tiempo<=60; tiempo+=0.5){
+let inicio=t[0]-5;
+
+let fin=t[2]+5;
+
+
+
+for(let tiempo=inicio; tiempo<=fin; tiempo+=0.2){
 
 
 curva.push({
@@ -202,7 +215,6 @@ y:P(tiempo)
 
 
 
-
 if(grafico){
 
 grafico.destroy();
@@ -212,11 +224,14 @@ grafico.destroy();
 
 
 
+
 grafico=new Chart(
 
 document.getElementById("grafica"),
 
+
 {
+
 
 type:"line",
 
@@ -227,9 +242,11 @@ data:{
 datasets:[
 
 
+
 {
 
-label:"Curva interpolada Newton",
+
+label:"Polinomio de Newton",
 
 data:curva,
 
@@ -240,17 +257,21 @@ pointRadius:0
 },
 
 
+
+
 {
 
-label:"Datos experimentales Arduino",
 
-data:datosT.map((t,i)=>({
+label:"Datos experimentales",
 
-x:t,
+data:datosT.map((valor,i)=>({
+
+x:valor,
 
 y:datosV[i]
 
 })),
+
 
 type:"scatter",
 
@@ -260,17 +281,23 @@ pointRadius:5
 
 
 
+
+
 {
 
-label:"Voltaje calculado",
+
+label:"Voltaje interpolado",
 
 data:[{
+
 
 x:x,
 
 y:resultado
 
+
 }],
+
 
 type:"scatter",
 
@@ -287,6 +314,9 @@ pointRadius:8
 
 
 
+
+
+
 options:{
 
 
@@ -296,19 +326,30 @@ responsive:true,
 scales:{
 
 
+
 x:{
 
 
 title:{
 
+
 display:true,
 
 text:"Tiempo (s)"
 
-}
+
+},
+
+
+min:t[0]-5,
+
+max:t[2]+5
 
 
 },
+
+
+
 
 
 y:{
@@ -316,19 +357,22 @@ y:{
 
 title:{
 
+
 display:true,
 
 text:"Voltaje del capacitor (V)"
 
+
 },
 
 
-min:0,
+min:V[0]-0.5,
 
-max:5
+max:V[2]+0.5
 
 
 }
+
 
 
 }
@@ -347,6 +391,7 @@ max:5
 
 
 }
+
 
 
 </script>
