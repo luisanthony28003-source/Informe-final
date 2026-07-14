@@ -6,59 +6,137 @@
 
 <meta charset="UTF-8">
 
-<title>Interpolación Newton</title>
+<title>Interpolación Newton RC</title>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
 <style>
 
+
 body{
 
-font-family:Arial;
+font-family:Arial, sans-serif;
+
 background:#f4f6f8;
+
 text-align:center;
 
+margin:0;
+
 }
+
+
+header{
+
+background:#003366;
+
+color:white;
+
+padding:25px;
+
+}
+
 
 
 .card{
 
 background:white;
-width:600px;
-margin:40px auto;
+
+width:850px;
+
+max-width:90%;
+
+margin:30px auto;
+
 padding:30px;
-border-radius:10px;
-box-shadow:0px 0px 10px #ccc;
+
+border-radius:15px;
+
+box-shadow:0px 5px 15px rgba(0,0,0,0.15);
 
 }
+
 
 
 input{
 
 padding:8px;
+
 margin:5px;
+
 width:100px;
 
 }
 
 
+
 button{
 
 padding:12px 25px;
+
 background:#00509e;
+
 color:white;
+
 border:none;
-border-radius:5px;
+
+border-radius:25px;
+
+cursor:pointer;
 
 }
+
+
+button:hover{
+
+background:#003366;
+
+}
+
+
+
+table{
+
+margin:20px auto;
+
+border-collapse:collapse;
+
+}
+
+
+
+td,th{
+
+border:1px solid #aaa;
+
+padding:8px 15px;
+
+}
+
 
 
 #resultado{
 
 margin-top:20px;
+
 font-size:20px;
+
 font-weight:bold;
 
+color:#003366;
+
 }
+
+
+
+canvas{
+
+margin-top:30px;
+
+}
+
 
 
 </style>
@@ -68,55 +146,152 @@ font-weight:bold;
 
 
 
+
 <body>
 
 
-<div class="card">
 
+<header>
 
 <h1>
 Interpolación de Newton de Segundo Orden
 </h1>
 
+<p>
+Estimación del voltaje del capacitor mediante datos experimentales del circuito RC.
+</p>
+
+</header>
+
+
+
+
+
+<div class="card">
+
+
+<h2>
+Fundamento del método
+</h2>
+
 
 <p>
-Estimación del voltaje del capacitor usando datos experimentales.
+
+La interpolación de Newton permite estimar valores desconocidos mediante un polinomio construido a partir de puntos experimentales conocidos.
+
+En este caso se utilizan tres nodos de tiempo-voltaje para aproximar el voltaje del capacitor en un instante determinado.
+
 </p>
 
 
 
-<h3>Datos</h3>
+<h2>
+Nodos experimentales utilizados
+</h2>
 
 
-<input id="t1" value="15" type="number">
-<input id="v1" value="3.760" type="number">
 
-<br>
+<table>
 
 
-<input id="t2" value="20" type="number">
-<input id="v2" value="4.150" type="number">
+<tr>
 
-<br>
+<th>
+Nodo
+</th>
+
+<th>
+Tiempo (s)
+</th>
+
+<th>
+Voltaje (V)
+</th>
+
+</tr>
 
 
-<input id="t3" value="30" type="number">
-<input id="v3" value="4.550" type="number">
+<tr>
 
-<br><br>
+<td>
+1
+</td>
+
+<td>
+<input id="t1" value="15">
+
+</td>
+
+<td>
+<input id="v1" value="3.760">
+
+</td>
+
+</tr>
 
 
-Tiempo a calcular:
+<tr>
 
-<input id="tx" value="25" type="number">
+<td>
+2
+</td>
+
+<td>
+<input id="t2" value="20">
+
+</td>
+
+<td>
+<input id="v2" value="4.150">
+
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+3
+</td>
+
+<td>
+<input id="t3" value="30">
+
+</td>
+
+<td>
+<input id="v3" value="4.550">
+
+</td>
+
+</tr>
+
+
+</table>
+
+
+
+
+<h3>
+Tiempo a estimar
+</h3>
+
+
+<input id="tx" value="25"> segundos
+
 
 
 <br><br>
 
 
 <button onclick="calcular()">
-Calcular
+
+Calcular interpolación
+
 </button>
+
 
 
 
@@ -124,33 +299,64 @@ Calcular
 
 
 
+<canvas id="grafica"></canvas>
+
+
+
 </div>
+
+
+
+
+
+
 
 
 
 <script>
 
 
+let grafico;
+
+
+
 function calcular(){
 
 
+
 let t=[
+
 Number(document.getElementById("t1").value),
+
 Number(document.getElementById("t2").value),
+
 Number(document.getElementById("t3").value)
+
 ];
+
 
 
 let V=[
+
 Number(document.getElementById("v1").value),
+
 Number(document.getElementById("v2").value),
+
 Number(document.getElementById("v3").value)
+
 ];
 
 
+
 let x=
+
 Number(document.getElementById("tx").value);
 
+
+
+
+
+// coeficientes Newton
 
 
 let b0=V[0];
@@ -166,24 +372,226 @@ let b2=(f12-b1)/(t[2]-t[0]);
 
 
 
-let resultado=
-b0+
+
+
+function P(x){
+
+
+return b0+
+
 b1*(x-t[0])+
+
 b2*(x-t[0])*(x-t[1]);
+
+
+}
+
+
+
+
+
+let resultado=P(x);
 
 
 
 document.getElementById("resultado").innerHTML=
 
-"Voltaje estimado = "
-+ resultado.toFixed(4)
-+" V";
+`
+
+Voltaje estimado:
+
+${resultado.toFixed(4)} V
+
+<br><br>
+
+Coeficientes:
+
+<br>
+
+b0 = ${b0.toFixed(4)}
+
+<br>
+
+b1 = ${b1.toFixed(6)}
+
+<br>
+
+b2 = ${b2.toFixed(6)}
+
+`;
+
+
+
+
+
+
+// generar puntos de curva
+
+
+let puntos=[];
+
+
+for(let i=15;i<=30;i+=0.5){
+
+
+puntos.push({
+
+x:i,
+
+y:P(i)
+
+});
+
+
+}
+
+
+
+
+
+if(grafico){
+
+grafico.destroy();
+
+}
+
+
+
+
+grafico=new Chart(
+
+document.getElementById("grafica"),
+
+{
+
+
+type:"line",
+
+
+data:{
+
+
+datasets:[
+
+{
+
+
+label:"Polinomio de Newton",
+
+data:puntos,
+
+borderWidth:2,
+
+fill:false
+
+},
+
+
+
+{
+
+
+label:"Nodos experimentales",
+
+data:[
+
+{x:t[0],y:V[0]},
+
+{x:t[1],y:V[1]},
+
+{x:t[2],y:V[2]}
+
+],
+
+type:"scatter",
+
+pointRadius:6
+
+},
+
+
+
+{
+
+
+label:"Punto interpolado",
+
+data:[
+
+{x:x,y:resultado}
+
+],
+
+type:"scatter",
+
+pointRadius:8
+
+}
+
+
+]
+
+
+},
+
+
+
+options:{
+
+
+scales:{
+
+
+x:{
+
+
+title:{
+
+
+display:true,
+
+text:"Tiempo (s)"
+
+}
+
+},
+
+
+y:{
+
+
+title:{
+
+
+display:true,
+
+text:"Voltaje (V)"
+
+}
+
+}
+
+
+}
+
+
+
+}
+
+
+}
+
+
+
+);
+
 
 
 }
 
 
 </script>
+
 
 
 
