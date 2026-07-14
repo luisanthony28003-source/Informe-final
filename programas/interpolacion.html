@@ -1,146 +1,338 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+Interpolación de Newton - Circuito RC
+</title>
+
+
+<style>
+
+body{
+
+font-family:Arial, sans-serif;
+
+background:#f4f6f8;
+
+text-align:center;
+
+margin:0;
+
+}
+
+
+.card{
+
+background:white;
+
+width:850px;
+
+max-width:90%;
+
+margin:40px auto;
+
+padding:30px;
+
+border-radius:15px;
+
+box-shadow:0px 5px 15px #ccc;
+
+}
+
+
+
+input{
+
+padding:8px;
+
+width:100px;
+
+margin:5px;
+
+}
+
+
+
+button{
+
+background:#00509e;
+
+color:white;
+
+border:none;
+
+padding:12px 25px;
+
+border-radius:20px;
+
+cursor:pointer;
+
+font-size:15px;
+
+}
+
+
+
+button:hover{
+
+background:#003f7d;
+
+}
+
+
+
+#resultado{
+
+margin-top:25px;
+
+text-align:left;
+
+line-height:1.7;
+
+}
+
+
+
+table{
+
+margin:20px auto;
+
+border-collapse:collapse;
+
+}
+
+
+
+th,td{
+
+border:1px solid #aaa;
+
+padding:8px 15px;
+
+}
+
+
+
+h1,h2{
+
+color:#00509e;
+
+}
+
+
+</style>
+
+
+</head>
+
+
+
+<body>
+
+
+
+<div class="card">
+
+
+<h1>
+Interpolación de Newton de Segundo Orden
+</h1>
+
+
+<p>
+
+Estimación del voltaje del capacitor utilizando datos experimentales obtenidos mediante Arduino.
+
+</p>
+
+
+
+<h2>
+Fundamento del método
+</h2>
+
+
+<p>
+
+La interpolación de Newton permite estimar valores intermedios mediante un polinomio construido a partir de nodos experimentales conocidos.
+
+</p>
+
+
+
+<h3>
+
+P(x)=b0+b1(x-t0)+b2(x-t0)(x-t1)
+
+</h3>
+
+
+
+
+<h2>
+Datos experimentales utilizados
+</h2>
+
+
+
+<table>
+
+<tr>
+
+<th>
+Tiempo (s)
+</th>
+
+<th>
+Voltaje (V)
+</th>
+
+</tr>
+
+
+<tr>
+
+<td>15</td>
+
+<td>3.760</td>
+
+</tr>
+
+
+<tr>
+
+<td>20</td>
+
+<td>4.150</td>
+
+</tr>
+
+
+<tr>
+
+<td>30</td>
+
+<td>4.550</td>
+
+</tr>
+
+
+</table>
+
+
+
+
+
+<h2>
+Tiempo a estimar
+</h2>
+
+
+
+<input id="tiempo" type="number" value="25">
+
+
+s
+
+
+
+<br><br>
+
+
+<button onclick="calcular()">
+
+Calcular interpolación
+
+</button>
+
+
+
+
+<div id="resultado"></div>
+
+
+
+</div>
+
+
+
+
+
+
+
 <script>
+
 
 function calcular(){
 
 
-let datosT=[
-0,1,2,3,4,5,6,7,8,9,
-10,11,12,13,14,15,
-16,17,18,19,20,21,22,
-23,24,25,30,40,59,122
-];
 
+// Datos experimentales
 
-let datosV=[
-0.000,0.000,0.390,0.840,1.290,
-1.630,1.960,2.300,2.530,2.750,
-2.970,3.140,3.310,3.480,3.650,
-3.760,3.870,3.930,3.980,4.040,
-4.150,4.210,4.270,4.320,4.380,
-4.430,4.550,4.710,4.830,4.830
-];
+let t=[15,20,30];
 
 
+let V=[3.760,4.150,4.550];
 
-// Tiempo que desea calcular
 
-let x = Number(document.getElementById("tx").value);
 
 
+// tiempo buscado
 
-// Buscar los tres nodos más cercanos
+let x=
 
-let nodos=[];
+Number(document.getElementById("tiempo").value);
 
 
-for(let i=0;i<datosT.length;i++){
 
 
-nodos.push({
-
-t:datosT[i],
-
-V:datosV[i],
-
-distancia:Math.abs(datosT[i]-x)
-
-});
-
-
-}
-
-
-
-nodos.sort((a,b)=>a.distancia-b.distancia);
-
-
-
-
-// Seleccionar nodos
-
-let t=[
-
-nodos[0].t,
-
-nodos[1].t,
-
-nodos[2].t
-
-];
-
-
-let V=[
-
-nodos[0].V,
-
-nodos[1].V,
-
-nodos[2].V
-
-];
-
-
-
-
-
-// Ordenar por tiempo
-
-for(let i=0;i<3;i++){
-
-for(let j=i+1;j<3;j++){
-
-
-if(t[i]>t[j]){
-
-
-let aux=t[i];
-
-t[i]=t[j];
-
-t[j]=aux;
-
-
-
-aux=V[i];
-
-V[i]=V[j];
-
-V[j]=aux;
-
-
-
-}
-
-
-}
-
-
-}
-
-
-
-
-
-
-// Coeficientes de Newton
+// coeficientes Newton
 
 
 let b0=V[0];
 
 
-let b1=(V[1]-V[0])/(t[1]-t[0]);
+let b1=
 
+(V[1]-V[0])
 
-let f12=(V[2]-V[1])/(t[2]-t[1]);
+/
 
-
-let b2=(f12-b1)/(t[2]-t[0]);
-
-
+(t[1]-t[0]);
 
 
 
-// Polinomio
+let f12=
+
+(V[2]-V[1])
+
+/
+
+(t[2]-t[1]);
+
+
+
+let b2=
+
+(f12-b1)
+
+/
+
+(t[2]-t[0]);
+
+
+
+
+
+// evaluación del polinomio
+
 
 let resultado=
 
@@ -158,13 +350,13 @@ b2*(x-t[0])*(x-t[1]);
 
 
 
-// Valor experimental Arduino
+// valor experimental del informe
+
 
 let experimental=4.430;
 
 
 
-// Error relativo
 
 let error=
 
@@ -178,72 +370,108 @@ experimental*100;
 
 
 
-
-
-
 document.getElementById("resultado").innerHTML=
+
 
 
 `
 
-<h3>Resultado de Interpolación de Newton</h3>
+<h2>
+Resultado obtenido
+</h2>
 
 
 <p>
 
-El método utiliza tres valores experimentales cercanos al instante solicitado para construir un polinomio de segundo orden.
-
-</p>
-
-
-
-<p>
-
-Los nodos seleccionados fueron:
-
-<br>
-
-(${t[0]} s , ${V[0]} V)
-
-<br>
-
-(${t[1]} s , ${V[1]} V)
-
-<br>
-
-(${t[2]} s , ${V[2]} V)
-
-</p>
-
-
-
-
-<p>
-
-El voltaje estimado mediante interpolación para:
+Para estimar el voltaje en:
 
 <br>
 
 <b>
 
-t = ${x} s
+t = ${x} segundos
 
 </b>
 
-es:
-
-
 <br>
 
-<h2>
-
-${resultado.toFixed(4)} V
-
-</h2>
-
+se utilizaron los nodos experimentales:
 
 </p>
 
+
+
+<table>
+
+
+<tr>
+
+<th>
+Nodo
+</th>
+
+<th>
+Tiempo
+</th>
+
+<th>
+Voltaje
+</th>
+
+</tr>
+
+
+
+<tr>
+
+<td>1</td>
+
+<td>${t[0]} s</td>
+
+<td>${V[0]} V</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>2</td>
+
+<td>${t[1]} s</td>
+
+<td>${V[1]} V</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>3</td>
+
+<td>${t[2]} s</td>
+
+<td>${V[2]} V</td>
+
+</tr>
+
+
+</table>
+
+
+
+
+
+<h3>
+
+Voltaje interpolado:
+
+<br>
+
+${resultado.toFixed(4)} V
+
+</h3>
 
 
 
@@ -252,27 +480,37 @@ ${resultado.toFixed(4)} V
 
 
 
+
+<h3>
+Validación experimental
+</h3>
+
+
+
 <p>
 
-Para validar el resultado se compara con la medición experimental del Arduino:
+Voltaje medido mediante Arduino:
+
+<br>
+
+${experimental.toFixed(3)} V
 
 </p>
 
 
+
+
 <p>
-
-Voltaje experimental:
-
-<b>${experimental.toFixed(3)} V</b>
-
-
-<br><br>
-
 
 Error relativo:
 
-<b>${error.toFixed(3)} %</b>
+<br>
 
+<b>
+
+${error.toFixed(3)} %
+
+</b>
 
 </p>
 
@@ -280,7 +518,7 @@ Error relativo:
 
 <p>
 
-El bajo porcentaje de error indica que la aproximación mediante el polinomio de Newton representa adecuadamente el comportamiento del capacitor en la zona analizada.
+El resultado demuestra que el polinomio de Newton de segundo orden permite aproximar correctamente el comportamiento del capacitor en el intervalo analizado.
 
 </p>
 
@@ -294,3 +532,9 @@ El bajo porcentaje de error indica que la aproximación mediante el polinomio de
 
 
 </script>
+
+
+
+</body>
+
+</html>
