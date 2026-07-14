@@ -1,338 +1,18 @@
-<!DOCTYPE html>
-
-<html lang="es">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Runge-Kutta 4 - Circuito RC</title>
-
-
-<!-- Librería para mostrar ecuaciones matemáticas -->
-
-<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-
-<script id="MathJax-script" async
-src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-</script>
-
-
-
-<style>
-
-body{
-
-font-family:Arial,sans-serif;
-
-background:#f4f6f8;
-
-text-align:center;
-
-}
-
-
-
-.card{
-
-background:white;
-
-width:950px;
-
-max-width:90%;
-
-margin:40px auto;
-
-padding:30px;
-
-border-radius:15px;
-
-box-shadow:0px 5px 15px #ccc;
-
-}
-
-
-
-input{
-
-padding:8px;
-
-width:130px;
-
-margin:5px;
-
-border-radius:5px;
-
-border:1px solid #aaa;
-
-}
-
-
-
-button{
-
-background:#00509e;
-
-color:white;
-
-border:none;
-
-padding:12px 25px;
-
-border-radius:20px;
-
-cursor:pointer;
-
-font-size:15px;
-
-}
-
-
-
-button:hover{
-
-background:#003f7d;
-
-}
-
-
-
-table{
-
-margin:20px auto;
-
-border-collapse:collapse;
-
-background:white;
-
-}
-
-
-
-th{
-
-background:#00509e;
-
-color:white;
-
-}
-
-
-
-th,td{
-
-border:1px solid #aaa;
-
-padding:8px 15px;
-
-}
-
-
-
-#resultado{
-
-text-align:left;
-
-line-height:1.7;
-
-}
-
-
-
-h1,h2{
-
-color:#00509e;
-
-}
-
-
-p{
-
-font-size:16px;
-
-}
-
-
-</style>
-
-
-</head>
-
-
-
-
-<body>
-
-
-<div class="card">
-
-
-
-<h1>
-Método Runge-Kutta de Cuarto Orden (RK4)
-</h1>
-
-
-<p>
-
-Simulación numérica de la descarga de un capacitor en un circuito RC mediante la solución aproximada de una ecuación diferencial.
-
-</p>
-
-
-
-
-<h2>
-Fundamento matemático
-</h2>
-
-
-<p>
-
-La descarga de un capacitor está gobernada por la ecuación diferencial:
-
-</p>
-
-
-<h3>
-
-\[
-\frac{dV}{dt}=-\frac{V}{RC}
-\]
-
-</h3>
-
-
-<p>
-
-donde <b>R</b> representa la resistencia, <b>C</b> la capacitancia y <b>V</b> el voltaje instantáneo del capacitor.
-
-</p>
-
-
-
-
-<h2>
-Parámetros del circuito
-</h2>
-
-
-
-<p>
-Ingrese los valores para realizar la simulación:
-</p>
-
-
-
-Voltaje inicial:
-
-<br>
-
-<input id="V0" value="4.830" type="number" step="0.001">
-
-V
-
-
-<br><br>
-
-
-
-Resistencia:
-
-<br>
-
-<input id="R" value="10000" type="number">
-
-Ω
-
-
-<br><br>
-
-
-
-Capacitancia:
-
-<br>
-
-<input id="C" value="0.001" type="number" step="0.0001">
-
-F
-
-
-<br><br>
-
-
-
-Tiempo final:
-
-<br>
-
-<input id="tf" value="60" type="number">
-
-s
-
-
-<br><br>
-
-
-
-Paso de integración:
-
-<br>
-
-<input id="h" value="2" type="number">
-
-s
-
-
-<br><br>
-
-
-
-<button onclick="calcular()">
-
-Simular RK4
-
-</button>
-
-
-
-<div id="resultado"></div>
-
-
-
-</div>
-
-
-
-
-
-
-
 <script>
 
 
 function calcular(){
 
 
-
 let V0 = Number(document.getElementById("V0").value);
-
 
 let R = Number(document.getElementById("R").value);
 
-
 let C = Number(document.getElementById("C").value);
-
 
 let tf = Number(document.getElementById("tf").value);
 
-
 let h = Number(document.getElementById("h").value);
-
-
 
 
 
@@ -343,8 +23,7 @@ let tau = R*C;
 
 
 
-
-// Función diferencial
+// Ecuación diferencial del circuito RC
 
 function f(t,V){
 
@@ -356,11 +35,9 @@ return -V/tau;
 
 
 
-
 let tiempo=[];
 
 let voltaje=[];
-
 
 
 let V=V0;
@@ -368,17 +45,14 @@ let V=V0;
 
 
 
-
 // Método RK4
 
-
-for(let t=0;t<=tf;t+=h){
+for(let t=0; t<=tf; t+=h){
 
 
 tiempo.push(t);
 
 voltaje.push(V);
-
 
 
 
@@ -417,7 +91,6 @@ V+h*k3
 
 
 
-
 V = V +
 
 (h/6)*(
@@ -433,16 +106,13 @@ k4
 );
 
 
-
 }
 
 
 
 
 
-
-
-// Solución analítica
+// Solución exacta
 
 function exacta(t){
 
@@ -453,11 +123,9 @@ return V0*Math.exp(-t/tau);
 
 
 
-
-
+// Crear tabla
 
 let tabla="";
-
 
 
 for(let i=0;i<tiempo.length;i++){
@@ -469,28 +137,14 @@ tabla +=
 
 <tr>
 
-<td>
+<td>${tiempo[i].toFixed(1)}</td>
 
-${tiempo[i].toFixed(1)}
+<td>${voltaje[i].toFixed(4)}</td>
 
-</td>
-
-
-<td>
-
-${voltaje[i].toFixed(4)}
-
-</td>
-
-
-<td>
-
-${exacta(tiempo[i]).toFixed(4)}
-
-</td>
-
+<td>${exacta(tiempo[i]).toFixed(4)}</td>
 
 </tr>
+
 
 `;
 
@@ -501,38 +155,25 @@ ${exacta(tiempo[i]).toFixed(4)}
 
 
 
-
-document.getElementById("resultado").innerHTML=
-
+document.getElementById("resultado").innerHTML =
 
 
 `
 
 <h2>
-Resultados obtenidos
+Resultados de la simulación
 </h2>
 
 
 <p>
 
+<b>
 Constante de tiempo del circuito:
+</b>
 
-</p>
+<br>
 
-
-<p>
-
-\[
-\tau = RC = ${tau.toFixed(3)}s
-\]
-
-</p>
-
-
-
-<p>
-
-El método RK4 calcula la solución aproximada mediante cuatro pendientes:
+τ = R × C = ${tau.toFixed(3)} segundos
 
 </p>
 
@@ -540,12 +181,30 @@ El método RK4 calcula la solución aproximada mediante cuatro pendientes:
 
 <p>
 
-\[
-V_{n+1}=V_n+\frac{h}{6}(k_1+2k_2+2k_3+k_4)
-\]
+<b>
+Ecuación diferencial utilizada:
+</b>
+
+<br>
+
+dV/dt = -V/(RC)
 
 </p>
 
+
+
+
+<p>
+
+<b>
+Fórmula del método RK4:
+</b>
+
+<br><br>
+
+V(n+1) = V(n) + (h/6) × [k1 + 2k2 + 2k3 + k4]
+
+</p>
 
 
 
@@ -572,7 +231,7 @@ RK4 (V)
 
 
 <th>
-Solución exacta (V)
+Modelo exacto (V)
 </th>
 
 
@@ -596,7 +255,7 @@ Interpretación física
 
 <p>
 
-El método Runge-Kutta de cuarto orden permite predecir el comportamiento dinámico del capacitor durante la descarga resolviendo numéricamente la ecuación diferencial del circuito RC.
+El método Runge-Kutta de cuarto orden permite aproximar la evolución del voltaje del capacitor durante la descarga resolviendo la ecuación diferencial del circuito RC.
 
 </p>
 
@@ -604,7 +263,7 @@ El método Runge-Kutta de cuarto orden permite predecir el comportamiento dinám
 
 <p>
 
-La solución obtenida presenta un comportamiento exponencial decreciente, característica de los sistemas RC de primer orden.
+La simulación reproduce el comportamiento exponencial decreciente característico de un capacitor que libera la energía almacenada a través de una resistencia.
 
 </p>
 
@@ -612,7 +271,7 @@ La solución obtenida presenta un comportamiento exponencial decreciente, caract
 
 <p>
 
-Las diferencias entre el modelo matemático y una medición real dependen de tolerancias de los componentes electrónicos y del sistema de adquisición utilizado.
+Las diferencias respecto a un circuito real pueden aparecer debido a tolerancias de los componentes electrónicos, variaciones de capacitancia y resolución del sistema de medición.
 
 </p>
 
@@ -624,10 +283,5 @@ Las diferencias entre el modelo matemático y una medición real dependen de tol
 
 }
 
+
 </script>
-
-
-</body>
-
-
-</html>
