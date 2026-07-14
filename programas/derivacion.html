@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Derivación Numérica RC</title>
+
+
+<style>
+
+
+body{
+
+font-family:Arial, sans-serif;
+
+background:#f4f6f8;
+
+text-align:center;
+
+margin:0;
+
+}
+
+
+
+header{
+
+background:#003366;
+
+color:white;
+
+padding:25px;
+
+}
+
+
+
+.card{
+
+background:white;
+
+max-width:750px;
+
+margin:40px auto;
+
+padding:30px;
+
+border-radius:15px;
+
+box-shadow:0px 5px 15px rgba(0,0,0,0.15);
+
+}
+
+
+
+input{
+
+padding:10px;
+
+margin:5px;
+
+width:120px;
+
+}
+
+
+
+button{
+
+background:#00509e;
+
+color:white;
+
+border:none;
+
+padding:12px 25px;
+
+border-radius:25px;
+
+cursor:pointer;
+
+}
+
+
+
+button:hover{
+
+background:#003366;
+
+}
+
+
+
+#resultado{
+
+margin-top:25px;
+
+font-size:20px;
+
+font-weight:bold;
+
+color:#003366;
+
+}
+
+
+</style>
+
+
+</head>
+
+
+
+<body>
+
+
+
+<header>
+
+
+<h1>
+Derivación Numérica
+</h1>
+
+
+<p>
+Diferencia centrada aplicada al circuito RC
+</p>
+
+
+</header>
+
+
+
+
+<div class="card">
+
+
+<h2>
+Datos experimentales
+</h2>
+
+
+
+<h3>
+Punto anterior
+</h3>
+
+
+Tiempo:
+
+<input id="t1" value="20" type="number">
+
+
+Voltaje:
+
+<input id="v1" value="4.150" type="number">
+
+
+
+<h3>
+Punto central
+</h3>
+
+
+Tiempo:
+
+<input id="tc" value="30" type="number">
+
+
+
+
+<h3>
+Punto posterior
+</h3>
+
+
+Tiempo:
+
+<input id="t2" value="40" type="number">
+
+
+Voltaje:
+
+<input id="v2" value="4.710" type="number">
+
+
+
+<br><br>
+
+
+<button onclick="calcular()">
+
+Calcular derivada
+
+</button>
+
+
+
+<div id="resultado"></div>
+
+
+
+</div>
+
+
+
+
+
+
+<script>
+
+
+function calcular(){
+
+
+
+let tAnterior =
+Number(document.getElementById("t1").value);
+
+
+
+let tCentral =
+Number(document.getElementById("tc").value);
+
+
+
+let tPosterior =
+Number(document.getElementById("t2").value);
+
+
+
+
+let VAnterior =
+Number(document.getElementById("v1").value);
+
+
+
+let VPosterior =
+Number(document.getElementById("v2").value);
+
+
+
+
+
+// paso h
+
+let h=(tPosterior-tAnterior)/2;
+
+
+
+
+// Diferencia centrada
+
+let derivada =
+(VPosterior-VAnterior)/(2*h);
+
+
+
+
+
+// Derivada teórica del modelo RC
+
+
+let Vmax=4.830;
+
+let tau=10;
+
+
+
+let derivadaTeorica =
+(Vmax/tau)*Math.exp(-tCentral/tau);
+
+
+
+
+
+let error =
+Math.abs(derivadaTeorica-derivada)
+/
+derivadaTeorica*100;
+
+
+
+
+
+document.getElementById("resultado").innerHTML=
+
+`
+Derivada numérica = ${derivada.toFixed(5)} V/s
+<br>
+Derivada teórica = ${derivadaTeorica.toFixed(5)} V/s
+<br>
+Error relativo = ${error.toFixed(3)} %
+`;
+
+
+
+}
+
+
+</script>
+
+
+
+</body>
+
+</html>
