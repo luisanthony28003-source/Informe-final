@@ -6,33 +6,89 @@
 
 <meta charset="UTF-8">
 
-<title>Integración Numérica RC</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>
+Análisis Numérico del Circuito RC
+</title>
+
 
 
 <style>
 
+
 body{
 
-font-family:Arial;
+font-family:Arial, sans-serif;
+
+margin:0;
 
 background:#f4f6f8;
+
+color:#333;
+
+}
+
+
+
+header{
+
+background:#00509e;
+
+color:white;
+
+padding:35px;
 
 text-align:center;
 
 }
 
 
+
+nav{
+
+background:#003f7d;
+
+padding:12px;
+
+text-align:center;
+
+}
+
+
+
+nav a{
+
+color:white;
+
+text-decoration:none;
+
+margin:15px;
+
+font-weight:bold;
+
+}
+
+
+
+section{
+
+width:85%;
+
+margin:40px auto;
+
+}
+
+
+
 .card{
 
 background:white;
 
-width:850px;
+padding:25px;
 
-max-width:90%;
-
-margin:40px auto;
-
-padding:30px;
+margin:20px 0;
 
 border-radius:15px;
 
@@ -41,9 +97,17 @@ box-shadow:0px 5px 15px #ccc;
 }
 
 
+
+h2{
+
+color:#00509e;
+
+}
+
+
+
 button{
 
-padding:12px 25px;
 
 background:#00509e;
 
@@ -51,43 +115,66 @@ color:white;
 
 border:none;
 
+padding:12px 25px;
+
 border-radius:20px;
 
 cursor:pointer;
 
-}
-
-
-
-table{
-
-margin:20px auto;
-
-border-collapse:collapse;
+font-size:15px;
 
 }
 
 
 
-th,td{
+button:hover{
 
-border:1px solid #aaa;
-
-padding:8px 15px;
+background:#003f7d;
 
 }
 
 
 
-#resultado{
+a{
 
-text-align:left;
-
-line-height:1.7;
-
-margin-top:25px;
+text-decoration:none;
 
 }
+
+
+
+.programa{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+
+gap:20px;
+
+}
+
+
+
+.programa .card{
+
+text-align:center;
+
+}
+
+
+
+footer{
+
+background:#003f7d;
+
+color:white;
+
+text-align:center;
+
+padding:20px;
+
+}
+
 
 
 </style>
@@ -97,31 +184,148 @@ margin-top:25px;
 
 
 
+
 <body>
 
+
+
+<header>
+
+
+<h1>
+
+Análisis Numérico del Circuito RC
+
+</h1>
+
+
+<h2 style="color:white">
+
+Carga y descarga de un capacitor mediante métodos de aproximación matemática
+
+</h2>
+
+
+<p>
+
+Universidad Nacional Mayor de San Marcos
+
+<br>
+
+Facultad de Ingeniería Electrónica y Eléctrica
+
+</p>
+
+
+</header>
+
+
+
+
+
+<nav>
+
+
+<a href="#inicio">
+Inicio
+</a>
+
+
+<a href="#teoria">
+Teoría
+</a>
+
+
+<a href="#programas">
+Programas
+</a>
+
+
+<a href="#video">
+Video
+</a>
+
+
+<a href="#informe">
+Informe
+</a>
+
+
+
+</nav>
+
+
+
+
+
+
+
+<section id="inicio">
 
 
 <div class="card">
 
 
-
-<h1>
-Integración Numérica
-</h1>
-
-
-
 <h2>
-Regla del Trapecio Compuesta
+Proyecto de Métodos Numéricos
 </h2>
 
 
 
 <p>
 
-La integración numérica permite calcular el área bajo una curva cuando solamente se tienen datos experimentales discretos.
+Aplicación web interactiva para analizar el comportamiento dinámico de un circuito RC mediante métodos numéricos e información experimental obtenida mediante Arduino.
 
-En este caso se calcula la energía acumulada representada mediante la integral del voltaje del capacitor durante la carga.
+</p>
+
+
+
+<p>
+
+El proyecto estudia la carga y descarga de un capacitor utilizando técnicas de interpolación, búsqueda de raíces, derivación, integración y solución de ecuaciones diferenciales.
+
+</p>
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="teoria">
+
+
+<div class="card">
+
+
+<h2>
+Fundamento Teórico
+</h2>
+
+
+
+<p>
+
+Un circuito RC está formado por una resistencia y un capacitor.
+
+Su comportamiento temporal está descrito mediante una ecuación diferencial de primer orden.
+
+</p>
+
+
+
+<p>
+
+Durante la carga:
 
 </p>
 
@@ -129,60 +333,91 @@ En este caso se calcula la energía acumulada representada mediante la integral 
 
 <h3>
 
-A = Σ ((V<sub>i</sub> + V<sub>i-1</sub>)/2) Δt
+V(t)=Vmax(1-e<sup>-t/RC</sup>)
 
 </h3>
 
 
+
+<p>
+
+Durante la descarga:
+
+</p>
 
 
 <h3>
-Datos experimentales utilizados
+
+dV/dt=-V/RC
+
 </h3>
 
 
 
-<table>
+<p>
+
+Debido a que los sistemas reales entregan datos discretos mediante sensores, los métodos numéricos permiten aproximar la solución utilizando mediciones experimentales.
+
+</p>
 
 
-<tr>
 
-<th>
-Tiempo (s)
-</th>
-
-<th>
-Voltaje (V)
-</th>
-
-</tr>
+</div>
 
 
-<tr><td>0</td><td>0.000</td></tr>
-<tr><td>2</td><td>0.390</td></tr>
-<tr><td>5</td><td>1.630</td></tr>
-<tr><td>10</td><td>2.970</td></tr>
-<tr><td>20</td><td>4.150</td></tr>
-<tr><td>30</td><td>4.550</td></tr>
-<tr><td>60</td><td>4.830</td></tr>
-
-
-</table>
+</section>
 
 
 
 
-<button onclick="calcular()">
 
-Calcular integral
+
+
+
+
+<section id="programas">
+
+
+<h2>
+Métodos Numéricos Implementados
+</h2>
+
+
+
+
+<div class="programa">
+
+
+
+
+
+<div class="card">
+
+
+<h3>
+
+1. Interpolación de Newton de segundo orden
+
+</h3>
+
+
+<p>
+
+Estimación del voltaje del capacitor utilizando nodos experimentales cercanos.
+
+</p>
+
+
+
+<a href="programas/interpolacion.html">
+
+<button>
+
+Abrir programa
 
 </button>
 
-
-
-<div id="resultado"></div>
-
-
+</a>
 
 
 </div>
@@ -192,279 +427,282 @@ Calcular integral
 
 
 
+<div class="card">
 
-<script>
 
+<h3>
 
+2. Newton-Raphson
 
-function calcular(){
+</h3>
 
 
+<p>
 
-let t=[
+Determina el instante donde el capacitor alcanza un voltaje objetivo.
 
-0,
+</p>
 
-2,
 
-5,
 
-10,
+<a href="programas/newton.html">
 
-20,
 
-30,
+<button>
 
-60
+Abrir programa
 
-];
+</button>
 
 
+</a>
 
-let V=[
 
-0.000,
+</div>
 
-0.390,
 
-1.630,
 
-2.970,
 
-4.150,
 
-4.550,
 
-4.830
+<div class="card">
 
-];
 
+<h3>
 
+3. Derivación Numérica
 
+</h3>
 
 
-let area=0;
+<p>
 
+Calcula la variación del voltaje respecto al tiempo mediante diferencias centradas.
 
+</p>
 
-let detalle="";
 
+<a href="programas/derivacion.html">
 
 
+<button>
 
+Abrir programa
 
+</button>
 
-for(let i=1;i<t.length;i++){
 
+</a>
 
 
-let h=t[i]-t[i-1];
+</div>
 
 
 
-let areaParcial=
 
-((V[i]+V[i-1])*h)/2;
 
 
+<div class="card">
 
-area+=areaParcial;
 
+<h3>
 
+4. Integración Numérica
 
-detalle+=
+</h3>
 
-`
 
-<b>Intervalo ${t[i-1]} s a ${t[i]} s</b>
+<p>
 
-<br>
+Calcula el área bajo la curva del voltaje mediante la regla del trapecio.
 
-Δt = ${h} s
+</p>
 
-<br>
 
-Área parcial = ${areaParcial.toFixed(4)} V·s
+<a href="programas/integracion.html">
 
-<br><br>
 
-`;
+<button>
 
+Abrir programa
 
+</button>
 
-}
 
+</a>
 
 
+</div>
 
 
 
 
-let promedio=
 
-area/60;
 
+<div class="card">
 
 
+<h3>
 
+5. Runge-Kutta de cuarto orden
 
-// Modelo teorico
+</h3>
 
 
-let Vmax=4.830;
+<p>
 
+Simula la descarga del capacitor resolviendo la ecuación diferencial del circuito RC.
 
-let tau=10;
+</p>
 
 
+<a href="programas/rk4.html">
 
-let integralTeorica=
 
-Vmax*
+<button>
 
-(
+Abrir programa
 
-60+
+</button>
 
-tau*Math.exp(-60/tau)
 
--tau
+</a>
 
-);
 
+</div>
 
 
 
-let promedioTeorico=
 
-integralTeorica/60;
 
+</div>
 
 
 
+</section>
 
-let error=
 
-Math.abs(promedio-promedioTeorico)
 
-/
 
-promedioTeorico*100;
 
 
 
 
 
+<section id="video">
 
 
-document.getElementById("resultado").innerHTML=
+<div class="card">
 
-
-`
 
 <h2>
-
-Resultados obtenidos
-
+Video demostrativo
 </h2>
 
 
 
 <p>
 
-El área calculada mediante la suma de trapecios representa la integral aproximada del voltaje del capacitor durante los primeros 60 segundos.
+En esta sección se presenta el montaje experimental del circuito RC y la adquisición de datos mediante Arduino.
 
 </p>
 
 
 
-<h3>
+https://drive.google.com/file/d/1rGPbFBduSwrRRCDCrxstD7eVeQJ4YY9B/view?usp=drive_link
 
-Área total:
 
-<br>
+<iframe width="560" height="315"
+src=""
+frameborder="0"
+allowfullscreen>
+</iframe>
 
-${area.toFixed(4)} V·s
 
-</h3>
 
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+
+<section id="informe">
+
+
+<div class="card">
+
+
+<h2>
+Informe PDF
+</h2>
 
 
 
 <p>
 
-Voltaje promedio experimental:
-
-<br>
-
-<b>${promedio.toFixed(4)} V</b>
-
+Descarga el informe completo del proyecto de Métodos Numéricos.
 
 </p>
 
 
+
+<a href="Proyecto final - Metodos Numericos.pdf" download>
+
+
+<button>
+
+Descargar Informe
+
+</button>
+
+
+</a>
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+
+<footer>
 
 
 <p>
 
-Voltaje promedio teórico:
+Proyecto realizado por:
 
 <br>
 
-${promedioTeorico.toFixed(4)} V
-
-</p>
-
-
-
-
-<p>
-
-Error relativo:
+Cancho Luis
 
 <br>
 
-<b>${error.toFixed(3)} %</b>
+Métodos Numéricos - UNMSM
 
 </p>
 
 
+</footer>
 
-<hr>
-
-
-
-<h3>
-
-Cálculo de áreas parciales
-
-</h3>
-
-
-
-${detalle}
-
-
-
-<p>
-
-El bajo error obtenido indica que la regla del trapecio permite aproximar adecuadamente la evolución temporal del voltaje del capacitor usando únicamente mediciones discretas.
-
-</p>
-
-
-`;
-
-
-
-}
-
-
-
-</script>
 
 
 
 </body>
+
 
 </html>
