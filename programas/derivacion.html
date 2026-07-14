@@ -9,12 +9,15 @@
 <title>Derivación Numérica RC</title>
 
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 <style>
 
 
 body{
 
-font-family:Arial, sans-serif;
+font-family:Arial;
 
 background:#f4f6f8;
 
@@ -42,27 +45,17 @@ padding:25px;
 
 background:white;
 
-max-width:750px;
+width:850px;
 
-margin:40px auto;
+max-width:90%;
+
+margin:30px auto;
 
 padding:30px;
 
 border-radius:15px;
 
-box-shadow:0px 5px 15px rgba(0,0,0,0.15);
-
-}
-
-
-
-input{
-
-padding:10px;
-
-margin:5px;
-
-width:120px;
+box-shadow:0px 5px 15px #ccc;
 
 }
 
@@ -70,13 +63,13 @@ width:120px;
 
 button{
 
+padding:12px 25px;
+
 background:#00509e;
 
 color:white;
 
 border:none;
-
-padding:12px 25px;
 
 border-radius:25px;
 
@@ -86,31 +79,22 @@ cursor:pointer;
 
 
 
-button:hover{
-
-background:#003366;
-
-}
-
-
-
 #resultado{
 
-margin-top:25px;
+margin:20px;
 
-font-size:20px;
-
-font-weight:bold;
+font-size:18px;
 
 color:#003366;
 
 }
 
 
+
 </style>
 
-
 </head>
+
 
 
 
@@ -120,14 +104,13 @@ color:#003366;
 
 <header>
 
-
 <h1>
 Derivación Numérica
 </h1>
 
 
 <p>
-Diferencia centrada aplicada al circuito RC
+Cálculo de la variación del voltaje del capacitor mediante diferencias finitas centradas
 </p>
 
 
@@ -136,60 +119,45 @@ Diferencia centrada aplicada al circuito RC
 
 
 
+
 <div class="card">
 
 
 <h2>
-Datos experimentales
+Fundamento del método
 </h2>
 
 
 
-<h3>
-Punto anterior
-</h3>
+<p>
 
+La derivación numérica permite aproximar la rapidez de cambio de una variable cuando solamente se tienen datos experimentales discretos.
 
-Tiempo:
+Para el circuito RC se calcula la pendiente del voltaje en:
 
-<input id="t1" value="20" type="number">
-
-
-Voltaje:
-
-<input id="v1" value="4.150" type="number">
+</p>
 
 
 
 <h3>
-Punto central
+t = 30 segundos
 </h3>
 
 
-Tiempo:
 
-<input id="tc" value="30" type="number">
+<p>
 
+Utilizando:
 
+</p>
 
 
 <h3>
-Punto posterior
+
+dV/dt = (V(t+h)-V(t-h))/(2h)
+
 </h3>
 
-
-Tiempo:
-
-<input id="t2" value="40" type="number">
-
-
-Voltaje:
-
-<input id="v2" value="4.710" type="number">
-
-
-
-<br><br>
 
 
 <button onclick="calcular()">
@@ -200,7 +168,12 @@ Calcular derivada
 
 
 
+
 <div id="resultado"></div>
+
+
+
+<canvas id="grafica"></canvas>
 
 
 
@@ -211,58 +184,85 @@ Calcular derivada
 
 
 
+
 <script>
+
+
+let grafico;
+
 
 
 function calcular(){
 
 
 
-let tAnterior =
-Number(document.getElementById("t1").value);
+// Datos experimentales completos
+
+
+let tiempo=[
+
+0,1,2,3,4,5,6,7,8,9,
+
+10,11,12,13,14,15,
+
+16,17,18,19,20,21,22,
+
+23,24,25,30,40,59,122
+
+];
 
 
 
-let tCentral =
-Number(document.getElementById("tc").value);
+let voltaje=[
 
+0,0,0.390,0.840,1.290,
 
+1.630,1.960,2.300,
 
-let tPosterior =
-Number(document.getElementById("t2").value);
+2.530,2.750,2.970,
 
+3.140,3.310,3.480,
 
+3.650,3.760,3.870,
 
+3.930,3.980,4.040,
 
-let VAnterior =
-Number(document.getElementById("v1").value);
+4.150,4.210,4.270,
 
+4.320,4.380,4.430,
 
+4.550,4.710,4.830,
 
-let VPosterior =
-Number(document.getElementById("v2").value);
+4.830
 
-
-
-
-
-// paso h
-
-let h=(tPosterior-tAnterior)/2;
-
-
-
-
-// Diferencia centrada
-
-let derivada =
-(VPosterior-VAnterior)/(2*h);
+];
 
 
 
 
 
-// Derivada teórica del modelo RC
+// Valores para diferencia centrada
+
+
+let h=10;
+
+
+let Vanterior=4.150;
+
+
+let Vposterior=4.710;
+
+
+
+let derivada=
+
+(Vposterior-Vanterior)/(2*h);
+
+
+
+
+
+// Derivada teorica
 
 
 let Vmax=4.830;
@@ -270,18 +270,16 @@ let Vmax=4.830;
 let tau=10;
 
 
+let teorica=
 
-let derivadaTeorica =
-(Vmax/tau)*Math.exp(-tCentral/tau);
-
-
+(Vmax/tau)*Math.exp(-30/tau);
 
 
 
-let error =
-Math.abs(derivadaTeorica-derivada)
-/
-derivadaTeorica*100;
+let error=
+
+Math.abs(teorica-derivada)/teorica*100;
+
 
 
 
@@ -289,17 +287,267 @@ derivadaTeorica*100;
 
 document.getElementById("resultado").innerHTML=
 
+
 `
-Derivada numérica = ${derivada.toFixed(5)} V/s
+
+<h3>Resultados</h3>
+
+Derivada numérica:
+
+<b>${derivada.toFixed(5)} V/s</b>
+
+<br><br>
+
+Derivada teórica:
+
+${teorica.toFixed(5)} V/s
+
+<br><br>
+
+Error relativo:
+
+${error.toFixed(3)} %
+
+<br><br>
+
+Usando:
+
 <br>
-Derivada teórica = ${derivadaTeorica.toFixed(5)} V/s
+
+V(20s)=4.150V
+
 <br>
-Error relativo = ${error.toFixed(3)} %
+
+V(40s)=4.710V
+
 `;
 
 
 
+
+
+
+
+// Curva experimental
+
+
+let puntosExperimental=
+
+
+tiempo.map((t,i)=>({
+
+x:t,
+
+y:voltaje[i]
+
+}));
+
+
+
+
+// Curva teorica
+
+
+let curva=[];
+
+
+for(let i=0;i<=60;i+=0.5){
+
+
+curva.push({
+
+x:i,
+
+y:Vmax*(1-Math.exp(-i/tau))
+
+});
+
+
 }
+
+
+
+
+// Punto central
+
+
+let V30=
+
+Vmax*(1-Math.exp(-30/tau));
+
+
+
+
+// Recta tangente
+
+
+let recta=[];
+
+
+for(let x=10;x<=50;x+=1){
+
+
+recta.push({
+
+x:x,
+
+y:V30+derivada*(x-30)
+
+});
+
+
+}
+
+
+
+
+
+
+if(grafico){
+
+grafico.destroy();
+
+}
+
+
+
+
+grafico=new Chart(
+
+document.getElementById("grafica"),
+
+{
+
+
+type:"line",
+
+
+data:{
+
+
+datasets:[
+
+
+
+{
+
+label:"Carga RC teórica",
+
+data:curva,
+
+borderWidth:3,
+
+pointRadius:0
+
+},
+
+
+
+{
+
+label:"Datos Arduino",
+
+data:puntosExperimental,
+
+type:"scatter",
+
+pointRadius:5
+
+},
+
+
+
+{
+
+label:"Tangente en t=30s",
+
+data:recta,
+
+borderWidth:2
+
+},
+
+
+
+{
+
+label:"Punto t=30s",
+
+data:[{
+
+x:30,
+
+y:V30
+
+}],
+
+type:"scatter",
+
+pointRadius:8
+
+}
+
+
+
+]
+
+
+},
+
+
+
+options:{
+
+
+scales:{
+
+
+x:{
+
+title:{
+
+display:true,
+
+text:"Tiempo(s)"
+
+}
+
+},
+
+
+y:{
+
+title:{
+
+display:true,
+
+text:"Voltaje(V)"
+
+},
+
+min:0,
+
+max:5
+
+}
+
+
+}
+
+
+}
+
+
+
+}
+
+
+
+);
+
+
+}
+
 
 
 </script>
