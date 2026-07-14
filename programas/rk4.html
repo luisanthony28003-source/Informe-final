@@ -6,7 +6,7 @@
 
 <meta charset="UTF-8">
 
-<title>Runge-Kutta RK4 Circuito RC</title>
+<title>Runge Kutta RK4 Circuito RC</title>
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,7 +17,7 @@
 
 body{
 
-font-family:Arial,sans-serif;
+font-family:Arial;
 
 background:#f4f6f8;
 
@@ -26,7 +26,6 @@ text-align:center;
 margin:0;
 
 }
-
 
 
 header{
@@ -40,32 +39,32 @@ padding:25px;
 }
 
 
-
 .card{
 
 background:white;
 
-max-width:850px;
+width:950px;
 
-margin:40px auto;
+max-width:90%;
+
+margin:30px auto;
 
 padding:30px;
 
 border-radius:15px;
 
-box-shadow:0 5px 15px rgba(0,0,0,0.15);
+box-shadow:0px 5px 15px #ccc;
 
 }
 
 
-
 input{
 
-padding:10px;
+width:100px;
+
+padding:8px;
 
 margin:5px;
-
-width:130px;
 
 }
 
@@ -73,25 +72,17 @@ width:130px;
 
 button{
 
+padding:12px 25px;
+
 background:#00509e;
 
 color:white;
 
 border:none;
 
-padding:12px 25px;
-
 border-radius:25px;
 
 cursor:pointer;
-
-}
-
-
-
-button:hover{
-
-background:#003366;
 
 }
 
@@ -121,9 +112,7 @@ padding:8px;
 
 margin:20px;
 
-font-size:20px;
-
-font-weight:bold;
+font-size:18px;
 
 color:#003366;
 
@@ -142,7 +131,9 @@ color:#003366;
 
 
 
+
 <header>
+
 
 <h1>
 Método Runge-Kutta de Cuarto Orden (RK4)
@@ -150,8 +141,9 @@ Método Runge-Kutta de Cuarto Orden (RK4)
 
 
 <p>
-Simulación de descarga del capacitor en un circuito RC
+Simulación numérica de la descarga de un capacitor en un circuito RC
 </p>
+
 
 </header>
 
@@ -159,7 +151,36 @@ Simulación de descarga del capacitor en un circuito RC
 
 
 
+
 <div class="card">
+
+
+<h2>
+Fundamento del método
+</h2>
+
+
+<p>
+
+El método RK4 permite resolver ecuaciones diferenciales mediante cuatro aproximaciones sucesivas de la pendiente.
+
+Para la descarga del capacitor:
+
+</p>
+
+
+<h3>
+
+dV/dt = -V/(RC)
+
+</h3>
+
+
+<p>
+
+La solución numérica se compara con mediciones obtenidas mediante Arduino.
+
+</p>
 
 
 
@@ -169,47 +190,41 @@ Parámetros del circuito
 
 
 
-<label>
-Resistencia Ω:
-</label>
+R(Ω)
 
-<input id="R" value="10000" type="number">
+<input id="R" value="10000">
 
 
 <br>
 
 
-<label>
-Capacitancia F:
-</label>
+C(F)
 
-<input id="C" value="0.001" type="number">
+<input id="C" value="0.001">
 
 
 <br>
 
 
-<label>
-Voltaje inicial:
-</label>
+Voltaje inicial(V)
 
-<input id="V0" value="4.830" type="number">
+<input id="V0" value="4.830">
 
 
 <br>
 
 
-<label>
-Tiempo final:
-</label>
+Paso h(s)
 
-<input id="tf" value="60" type="number">
+<input id="h" value="2">
+
 
 
 <br><br>
 
 
-<button onclick="simular()">
+
+<button onclick="calcular()">
 
 Ejecutar RK4
 
@@ -217,15 +232,22 @@ Ejecutar RK4
 
 
 
+
 <div id="resultado"></div>
+
+
 
 
 <canvas id="grafica"></canvas>
 
 
 
-<table id="tabla">
+<h2>
+Resultados RK4
+</h2>
 
+
+<table id="tabla">
 
 <tr>
 
@@ -234,13 +256,13 @@ Tiempo(s)
 </th>
 
 <th>
-Voltaje(V)
+Voltaje RK4(V)
 </th>
 
 </tr>
 
-
 </table>
+
 
 
 </div>
@@ -256,11 +278,12 @@ Voltaje(V)
 <script>
 
 
+
 let grafico;
 
 
 
-function simular(){
+function calcular(){
 
 
 
@@ -282,10 +305,9 @@ Number(document.getElementById("V0").value);
 
 
 
-let tf=
+let h=
 
-Number(document.getElementById("tf").value);
-
+Number(document.getElementById("h").value);
 
 
 
@@ -293,15 +315,12 @@ let tau=R*C;
 
 
 
-let h=2;
+let tf=60;
 
 
 
-let t=[];
 
-let V=[];
-
-
+// ecuacion diferencial
 
 
 function f(t,V){
@@ -314,7 +333,14 @@ return -V/tau;
 
 
 
-t.push(0);
+
+let tiempo=[];
+
+let V=[];
+
+
+
+tiempo.push(0);
 
 V.push(V0);
 
@@ -322,45 +348,63 @@ V.push(V0);
 
 
 
-while(t[t.length-1]<tf){
+while(tiempo[tiempo.length-1]<tf){
 
 
 
-let ti=t[t.length-1];
+let t=
 
-let Vi=V[V.length-1];
-
-
+tiempo[tiempo.length-1];
 
 
-let k1=f(ti,Vi);
+
+let y=
+
+V[V.length-1];
+
+
+
+
+
+let k1=f(t,y);
 
 
 
 let k2=f(
-ti+h/2,
-Vi+h*k1/2
+
+t+h/2,
+
+y+h*k1/2
+
 );
 
 
 
 let k3=f(
-ti+h/2,
-Vi+h*k2/2
+
+t+h/2,
+
+y+h*k2/2
+
 );
 
 
 
 let k4=f(
-ti+h,
-Vi+h*k3
+
+t+h,
+
+y+h*k3
+
 );
 
 
 
-let Vnuevo=
 
-Vi+
+
+let ynuevo=
+
+y+
 
 (h/6)*(
 
@@ -376,9 +420,10 @@ k4
 
 
 
-t.push(ti+h);
 
-V.push(Vnuevo);
+tiempo.push(t+h);
+
+V.push(ynuevo);
 
 
 
@@ -388,9 +433,100 @@ V.push(Vnuevo);
 
 
 
+
+
+// datos reales Arduino descarga
+
+
+let tReal=[
+
+0,1,2,3,4,5,6,7,8,9,
+
+10,11,12,13,14,15,
+
+16,17,18,19,21,23,
+
+25,27,29,31,35,
+
+45,50,60
+
+];
+
+
+
+
+let VReal=[
+
+4.830,
+
+4.830,
+
+4.710,
+
+4.550,
+
+4.490,
+
+4.150,
+
+3.820,
+
+3.540,
+
+3.260,
+
+3.030,
+
+2.810,
+
+2.580,
+
+2.410,
+
+2.240,
+
+2.080,
+
+1.910,
+
+1.800,
+
+1.630,
+
+1.520,
+
+1.460,
+
+1.230,
+
+1.010,
+
+0.840,
+
+0.730,
+
+0.670,
+
+0.560,
+
+0.390,
+
+0.110,
+
+0,
+
+0
+
+];
+
+
+
+
+
+// tabla
+
+
 let tabla=document.getElementById("tabla");
-
-
 
 tabla.innerHTML=
 
@@ -398,13 +534,9 @@ tabla.innerHTML=
 
 <tr>
 
-<th>
-Tiempo(s)
-</th>
+<th>Tiempo(s)</th>
 
-<th>
-Voltaje(V)
-</th>
+<th>Voltaje RK4(V)</th>
 
 </tr>
 
@@ -413,21 +545,45 @@ Voltaje(V)
 
 
 
-for(let i=0;i<t.length;i++){
+for(let i=0;i<tiempo.length;i++){
 
 
 
-let fila=tabla.insertRow();
+tabla.innerHTML+=
 
+`
 
+<tr>
 
-fila.insertCell(0).innerHTML=t[i].toFixed(0);
+<td>${tiempo[i].toFixed(0)}</td>
 
-fila.insertCell(1).innerHTML=V[i].toFixed(4);
+<td>${V[i].toFixed(4)}</td>
+
+</tr>
+
+`;
 
 
 
 }
+
+
+
+
+
+
+
+// error comparando primer punto medido en 2s
+
+
+let error=
+
+Math.abs(VReal[2]-V[1])
+
+/
+
+VReal[2]*100;
+
 
 
 
@@ -437,14 +593,66 @@ document.getElementById("resultado").innerHTML=
 
 `
 
-Constante de tiempo τ = ${tau.toFixed(2)} s
+<h3>Resultados</h3>
+
+
+Constante de tiempo:
+
+<b>${tau.toFixed(2)} segundos</b>
+
+
+<br><br>
+
+
+Voltaje RK4 en 2s:
+
+${V[1].toFixed(4)} V
+
 
 <br>
 
-Simulación completada correctamente
+
+Voltaje experimental:
+
+${VReal[2]} V
+
+
+<br>
+
+
+Error relativo:
+
+${error.toFixed(3)} %
 
 `;
 
+
+
+
+
+
+
+
+// curva analitica
+
+
+let analitica=[];
+
+
+
+for(let i=0;i<=60;i++){
+
+
+analitica.push({
+
+x:i,
+
+y:V0*Math.exp(-i/tau)
+
+});
+
+
+}
 
 
 
@@ -455,6 +663,7 @@ if(grafico){
 grafico.destroy();
 
 }
+
 
 
 
@@ -471,21 +680,60 @@ type:"line",
 data:{
 
 
-labels:t,
-
-
 datasets:[
+
+
 
 {
 
+label:"Solución RK4",
 
-label:"RK4 Descarga RC",
+data:tiempo.map((x,i)=>({
 
-data:V,
+x:x,
+
+y:V[i]
+
+})),
+
+borderWidth:3
+
+},
+
+
+
+
+{
+
+label:"Solución analítica",
+
+data:analitica,
 
 borderWidth:2
 
+},
+
+
+
+
+{
+
+label:"Datos Arduino",
+
+data:tReal.map((x,i)=>({
+
+x:x,
+
+y:VReal[i]
+
+})),
+
+type:"scatter",
+
+pointRadius:5
+
 }
+
 
 
 ]
@@ -498,22 +746,16 @@ borderWidth:2
 options:{
 
 
-responsive:true,
-
-
 scales:{
 
 
 x:{
 
-
 title:{
-
 
 display:true,
 
-text:"Tiempo (s)"
-
+text:"Tiempo(s)"
 
 }
 
@@ -522,30 +764,34 @@ text:"Tiempo (s)"
 
 y:{
 
-
 title:{
-
 
 display:true,
 
-text:"Voltaje (V)"
+text:"Voltaje(V)"
 
+},
 
-}
+min:0,
 
-}
-
-
-}
-
-
+max:5
 
 }
 
 
 }
+
+
+}
+
+
+
+}
+
+
 
 );
+
 
 
 }
