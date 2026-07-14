@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Runge-Kutta RK4 Circuito RC</title>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<style>
+
+
+body{
+
+font-family:Arial,sans-serif;
+
+background:#f4f6f8;
+
+text-align:center;
+
+margin:0;
+
+}
+
+
+
+header{
+
+background:#003366;
+
+color:white;
+
+padding:25px;
+
+}
+
+
+
+.card{
+
+background:white;
+
+max-width:850px;
+
+margin:40px auto;
+
+padding:30px;
+
+border-radius:15px;
+
+box-shadow:0 5px 15px rgba(0,0,0,0.15);
+
+}
+
+
+
+input{
+
+padding:10px;
+
+margin:5px;
+
+width:130px;
+
+}
+
+
+
+button{
+
+background:#00509e;
+
+color:white;
+
+border:none;
+
+padding:12px 25px;
+
+border-radius:25px;
+
+cursor:pointer;
+
+}
+
+
+
+button:hover{
+
+background:#003366;
+
+}
+
+
+
+table{
+
+margin:20px auto;
+
+border-collapse:collapse;
+
+}
+
+
+
+td,th{
+
+border:1px solid #aaa;
+
+padding:8px;
+
+}
+
+
+
+#resultado{
+
+margin:20px;
+
+font-size:20px;
+
+font-weight:bold;
+
+color:#003366;
+
+}
+
+
+</style>
+
+
+</head>
+
+
+
+
+<body>
+
+
+
+<header>
+
+<h1>
+Método Runge-Kutta de Cuarto Orden (RK4)
+</h1>
+
+
+<p>
+Simulación de descarga del capacitor en un circuito RC
+</p>
+
+</header>
+
+
+
+
+
+<div class="card">
+
+
+
+<h2>
+Parámetros del circuito
+</h2>
+
+
+
+<label>
+Resistencia Ω:
+</label>
+
+<input id="R" value="10000" type="number">
+
+
+<br>
+
+
+<label>
+Capacitancia F:
+</label>
+
+<input id="C" value="0.001" type="number">
+
+
+<br>
+
+
+<label>
+Voltaje inicial:
+</label>
+
+<input id="V0" value="4.830" type="number">
+
+
+<br>
+
+
+<label>
+Tiempo final:
+</label>
+
+<input id="tf" value="60" type="number">
+
+
+<br><br>
+
+
+<button onclick="simular()">
+
+Ejecutar RK4
+
+</button>
+
+
+
+<div id="resultado"></div>
+
+
+<canvas id="grafica"></canvas>
+
+
+
+<table id="tabla">
+
+
+<tr>
+
+<th>
+Tiempo(s)
+</th>
+
+<th>
+Voltaje(V)
+</th>
+
+</tr>
+
+
+</table>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<script>
+
+
+let grafico;
+
+
+
+function simular(){
+
+
+
+let R=
+
+Number(document.getElementById("R").value);
+
+
+
+let C=
+
+Number(document.getElementById("C").value);
+
+
+
+let V0=
+
+Number(document.getElementById("V0").value);
+
+
+
+let tf=
+
+Number(document.getElementById("tf").value);
+
+
+
+
+let tau=R*C;
+
+
+
+let h=2;
+
+
+
+let t=[];
+
+let V=[];
+
+
+
+
+function f(t,V){
+
+return -V/tau;
+
+}
+
+
+
+
+
+t.push(0);
+
+V.push(V0);
+
+
+
+
+
+while(t[t.length-1]<tf){
+
+
+
+let ti=t[t.length-1];
+
+let Vi=V[V.length-1];
+
+
+
+
+let k1=f(ti,Vi);
+
+
+
+let k2=f(
+ti+h/2,
+Vi+h*k1/2
+);
+
+
+
+let k3=f(
+ti+h/2,
+Vi+h*k2/2
+);
+
+
+
+let k4=f(
+ti+h,
+Vi+h*k3
+);
+
+
+
+let Vnuevo=
+
+Vi+
+
+(h/6)*(
+
+k1+
+
+2*k2+
+
+2*k3+
+
+k4
+
+);
+
+
+
+t.push(ti+h);
+
+V.push(Vnuevo);
+
+
+
+}
+
+
+
+
+
+let tabla=document.getElementById("tabla");
+
+
+
+tabla.innerHTML=
+
+`
+
+<tr>
+
+<th>
+Tiempo(s)
+</th>
+
+<th>
+Voltaje(V)
+</th>
+
+</tr>
+
+`;
+
+
+
+
+for(let i=0;i<t.length;i++){
+
+
+
+let fila=tabla.insertRow();
+
+
+
+fila.insertCell(0).innerHTML=t[i].toFixed(0);
+
+fila.insertCell(1).innerHTML=V[i].toFixed(4);
+
+
+
+}
+
+
+
+
+
+document.getElementById("resultado").innerHTML=
+
+`
+
+Constante de tiempo τ = ${tau.toFixed(2)} s
+
+<br>
+
+Simulación completada correctamente
+
+`;
+
+
+
+
+
+
+if(grafico){
+
+grafico.destroy();
+
+}
+
+
+
+grafico=new Chart(
+
+document.getElementById("grafica"),
+
+{
+
+
+type:"line",
+
+
+data:{
+
+
+labels:t,
+
+
+datasets:[
+
+{
+
+
+label:"RK4 Descarga RC",
+
+data:V,
+
+borderWidth:2
+
+}
+
+
+]
+
+
+},
+
+
+
+options:{
+
+
+responsive:true,
+
+
+scales:{
+
+
+x:{
+
+
+title:{
+
+
+display:true,
+
+text:"Tiempo (s)"
+
+
+}
+
+},
+
+
+y:{
+
+
+title:{
+
+
+display:true,
+
+text:"Voltaje (V)"
+
+
+}
+
+}
+
+
+}
+
+
+
+}
+
+
+}
+
+);
+
+
+}
+
+
+
+</script>
+
+
+
+
+</body>
+
+</html>
