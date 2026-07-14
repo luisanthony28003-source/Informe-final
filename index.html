@@ -1,164 +1,3 @@
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Análisis Numérico Circuito RC</title>
-
-<style>
-
-body{
-    font-family: Arial, sans-serif;
-    margin:0;
-    background:#f4f6f8;
-}
-
-header{
-    background:#003366;
-    color:white;
-    padding:25px;
-    text-align:center;
-}
-
-nav{
-    background:#00509e;
-    padding:15px;
-    text-align:center;
-}
-
-nav a{
-    color:white;
-    text-decoration:none;
-    margin:15px;
-    font-weight:bold;
-}
-
-
-section{
-    padding:40px;
-    text-align:center;
-}
-
-
-.card{
-    background:white;
-    margin:20px auto;
-    padding:25px;
-    max-width:800px;
-    border-radius:10px;
-    box-shadow:0px 0px 10px #ccc;
-}
-
-
-button{
-
-background:#00509e;
-color:white;
-padding:12px 25px;
-border:none;
-border-radius:5px;
-
-}
-
-</style>
-
-</head>
-
-
-<body>
-
-
-<header>
-
-<h1>
-Análisis Numérico del Circuito RC
-</h1>
-
-<p>
-Carga y descarga de un capacitor mediante métodos de aproximación matemática
-</p>
-
-<p>
-Universidad Nacional Mayor de San Marcos
-</p>
-
-</header>
-
-
-
-<nav>
-
-<a href="#inicio">Inicio</a>
-
-<a href="#teoria">Teoría</a>
-
-<a href="#programas">Programas</a>
-
-<a href="#video">Video</a>
-
-<a href="#informe">Informe</a>
-
-
-</nav>
-
-
-
-<section id="inicio">
-
-
-<div class="card">
-
-<h2>
-Proyecto de Métodos Numéricos
-</h2>
-
-<img src="Circuito RC.png" 
-width="400"
-alt="Circuito RC experimental">
-
-<p>
-
-Aplicación web interactiva para analizar el comportamiento dinámico de un circuito RC mediante métodos numéricos e información experimental obtenida mediante Arduino.
-
-</p>
-
-
-<button>
-Ingresar a la aplicación
-</button>
-
-
-</div>
-
-
-</section>
-
-
-
-<section id="teoria">
-
-<div class="card">
-
-<h2>
-Fundamento Teórico
-</h2>
-
-
-<p>
-Un circuito RC está formado por una resistencia y un capacitor, cuyo comportamiento temporal está descrito mediante una ecuación diferencial de primer orden.
-</p>
-
-
-</div>
-
-</section>
-
-
-
-
 <section id="programas">
 
 <h2>
@@ -173,12 +12,14 @@ Métodos Numéricos Implementados
 </h3>
 
 <p>
-Estimación del voltaje del capacitor en un instante determinado utilizando datos experimentales.
+Estimación del voltaje del capacitor utilizando datos experimentales.
 </p>
 
+<a href="programas/interpolacion.html">
 <button>
 Abrir programa
 </button>
+</a>
 
 </div>
 
@@ -191,7 +32,7 @@ Abrir programa
 </h3>
 
 <p>
-Determinación del tiempo donde el capacitor alcanza un voltaje objetivo durante la carga.
+Determinación del tiempo donde el capacitor alcanza un voltaje objetivo.
 </p>
 
 <button>
@@ -209,7 +50,7 @@ Abrir programa
 </h3>
 
 <p>
-Cálculo de la variación del voltaje respecto al tiempo mediante diferencias finitas.
+Cálculo de la variación del voltaje respecto al tiempo.
 </p>
 
 <button>
@@ -227,7 +68,7 @@ Abrir programa
 </h3>
 
 <p>
-Cálculo del área bajo la curva de voltaje mediante la regla del trapecio.
+Cálculo del área bajo la curva mediante la regla del trapecio.
 </p>
 
 <button>
@@ -257,6 +98,13 @@ Abrir programa
 
 </section>
 
+
+
+
+<section id="video">
+
+<div class="card">
+
 <h2>
 Video demostrativo
 </h2>
@@ -265,36 +113,6 @@ Video demostrativo
 Aquí se agregará el video del experimento.
 </p>
 
-
 </div>
 
 </section>
-
-
-
-
-<section id="informe">
-
-
-<div class="card">
-
-<h2>
-Informe PDF
-</h2>
-
-
-<p>
-Aquí estará disponible la descarga del informe completo.
-</p>
-
-
-</div>
-
-
-</section>
-
-
-
-</body>
-
-</html>
