@@ -11,6 +11,16 @@
 <title>Runge-Kutta 4 - Circuito RC</title>
 
 
+<!-- Librería para mostrar ecuaciones matemáticas -->
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+<script id="MathJax-script" async
+src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+
 <style>
 
 body{
@@ -49,9 +59,13 @@ input{
 
 padding:8px;
 
-width:120px;
+width:130px;
 
 margin:5px;
+
+border-radius:5px;
+
+border:1px solid #aaa;
 
 }
 
@@ -71,6 +85,8 @@ border-radius:20px;
 
 cursor:pointer;
 
+font-size:15px;
+
 }
 
 
@@ -88,6 +104,18 @@ table{
 margin:20px auto;
 
 border-collapse:collapse;
+
+background:white;
+
+}
+
+
+
+th{
+
+background:#00509e;
+
+color:white;
 
 }
 
@@ -120,10 +148,18 @@ color:#00509e;
 }
 
 
+p{
+
+font-size:16px;
+
+}
+
+
 </style>
 
 
 </head>
+
 
 
 
@@ -133,6 +169,7 @@ color:#00509e;
 <div class="card">
 
 
+
 <h1>
 Método Runge-Kutta de Cuarto Orden (RK4)
 </h1>
@@ -140,20 +177,21 @@ Método Runge-Kutta de Cuarto Orden (RK4)
 
 <p>
 
-Simulación numérica de la descarga de un capacitor en un circuito RC mediante la resolución de una ecuación diferencial ordinaria.
+Simulación numérica de la descarga de un capacitor en un circuito RC mediante la solución aproximada de una ecuación diferencial.
 
 </p>
 
 
 
+
 <h2>
-Modelo matemático
+Fundamento matemático
 </h2>
 
 
 <p>
 
-El comportamiento de descarga del capacitor está descrito por:
+La descarga de un capacitor está gobernada por la ecuación diferencial:
 
 </p>
 
@@ -167,6 +205,13 @@ El comportamiento de descarga del capacitor está descrito por:
 </h3>
 
 
+<p>
+
+donde <b>R</b> representa la resistencia, <b>C</b> la capacitancia y <b>V</b> el voltaje instantáneo del capacitor.
+
+</p>
+
+
 
 
 <h2>
@@ -176,9 +221,7 @@ Parámetros del circuito
 
 
 <p>
-
-Ingrese los valores del circuito para realizar la simulación:
-
+Ingrese los valores para realizar la simulación:
 </p>
 
 
@@ -192,7 +235,8 @@ Voltaje inicial:
 V
 
 
-<br>
+<br><br>
+
 
 
 Resistencia:
@@ -204,7 +248,8 @@ Resistencia:
 Ω
 
 
-<br>
+<br><br>
+
 
 
 Capacitancia:
@@ -216,7 +261,8 @@ Capacitancia:
 F
 
 
-<br>
+<br><br>
+
 
 
 Tiempo final:
@@ -228,7 +274,8 @@ Tiempo final:
 s
 
 
-<br>
+<br><br>
+
 
 
 Paso de integración:
@@ -252,7 +299,6 @@ Simular RK4
 
 
 
-
 <div id="resultado"></div>
 
 
@@ -264,8 +310,8 @@ Simular RK4
 
 
 
-<script>
 
+<script>
 
 
 function calcular(){
@@ -298,7 +344,7 @@ let tau = R*C;
 
 
 
-// Ecuación diferencial
+// Función diferencial
 
 function f(t,V){
 
@@ -329,11 +375,10 @@ let V=V0;
 for(let t=0;t<=tf;t+=h){
 
 
-
 tiempo.push(t);
 
-
 voltaje.push(V);
+
 
 
 
@@ -373,9 +418,7 @@ V+h*k3
 
 
 
-V=
-
-V+
+V = V +
 
 (h/6)*(
 
@@ -420,7 +463,9 @@ let tabla="";
 for(let i=0;i<tiempo.length;i++){
 
 
-tabla+=`
+tabla +=
+
+`
 
 <tr>
 
@@ -457,41 +502,50 @@ ${exacta(tiempo[i]).toFixed(4)}
 
 
 
-
-
-
 document.getElementById("resultado").innerHTML=
+
+
 
 `
 
 <h2>
-Resultados de la simulación
+Resultados obtenidos
 </h2>
-
 
 
 <p>
 
 Constante de tiempo del circuito:
 
-<br>
-
-<b>
-
-τ = RC = ${tau.toFixed(3)} segundos
-
-</b>
-
 </p>
 
+
+<p>
+
+\[
+\tau = RC = ${tau.toFixed(3)}s
+\]
+
+</p>
 
 
 
 <p>
 
-El método RK4 aproxima la solución de la ecuación diferencial mediante cuatro pendientes calculadas en cada paso de integración.
+El método RK4 calcula la solución aproximada mediante cuatro pendientes:
 
 </p>
+
+
+
+<p>
+
+\[
+V_{n+1}=V_n+\frac{h}{6}(k_1+2k_2+2k_3+k_4)
+\]
+
+</p>
+
 
 
 
@@ -509,19 +563,16 @@ Comparación RK4 y solución analítica
 
 <th>
 Tiempo (s)
-
 </th>
 
 
 <th>
 RK4 (V)
-
 </th>
 
 
 <th>
-Modelo exacto (V)
-
+Solución exacta (V)
 </th>
 
 
@@ -545,27 +596,26 @@ Interpretación física
 
 <p>
 
-El método Runge-Kutta de cuarto orden permite obtener la evolución temporal del voltaje del capacitor durante la descarga sin utilizar directamente la solución analítica.
+El método Runge-Kutta de cuarto orden permite predecir el comportamiento dinámico del capacitor durante la descarga resolviendo numéricamente la ecuación diferencial del circuito RC.
 
 </p>
-
 
 
 
 <p>
 
-La comparación entre RK4 y la solución exacta permite observar que el método numérico reproduce adecuadamente el comportamiento exponencial característico de un circuito RC.
+La solución obtenida presenta un comportamiento exponencial decreciente, característica de los sistemas RC de primer orden.
 
 </p>
-
 
 
 
 <p>
 
-Las diferencias que pueden existir respecto a las mediciones experimentales dependen de factores reales como la tolerancia del resistor, variación de capacitancia y resolución del sistema de adquisición Arduino.
+Las diferencias entre el modelo matemático y una medición real dependen de tolerancias de los componentes electrónicos y del sistema de adquisición utilizado.
 
 </p>
+
 
 
 `;
@@ -573,8 +623,6 @@ Las diferencias que pueden existir respecto a las mediciones experimentales depe
 
 
 }
-
-
 
 </script>
 
