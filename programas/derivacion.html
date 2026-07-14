@@ -6,14 +6,16 @@
 
 <meta charset="UTF-8">
 
-<title>Derivación Numérica RC</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Derivación Numérica - Circuito RC</title>
 
 
 <style>
 
 body{
 
-font-family:Arial;
+font-family:Arial,sans-serif;
 
 background:#f4f6f8;
 
@@ -41,20 +43,20 @@ box-shadow:0px 5px 15px #ccc;
 }
 
 
+
 input{
 
 padding:8px;
 
-width:100px;
+width:120px;
 
 margin:5px;
 
 }
 
 
-button{
 
-padding:12px 25px;
+button{
 
 background:#00509e;
 
@@ -62,9 +64,19 @@ color:white;
 
 border:none;
 
+padding:12px 25px;
+
 border-radius:20px;
 
 cursor:pointer;
+
+}
+
+
+
+button:hover{
+
+background:#003f7d;
 
 }
 
@@ -79,8 +91,7 @@ border-collapse:collapse;
 }
 
 
-
-th,td{
+td,th{
 
 border:1px solid #aaa;
 
@@ -96,7 +107,13 @@ text-align:left;
 
 line-height:1.7;
 
-margin-top:25px;
+}
+
+
+
+h1,h2{
+
+color:#00509e;
 
 }
 
@@ -111,98 +128,74 @@ margin-top:25px;
 <body>
 
 
-
 <div class="card">
 
 
-
 <h1>
-Derivación Numérica
+Derivación Numérica por Diferencia Centrada
 </h1>
-
-
-
-<h2>
-Método de Diferencias Centradas
-</h2>
-
 
 
 <p>
 
-La derivación numérica permite estimar la rapidez de cambio de una variable cuando solo se dispone de datos experimentales discretos.
-
-En este caso se determina la variación del voltaje del capacitor respecto al tiempo.
+Cálculo de la variación del voltaje del capacitor respecto al tiempo utilizando datos experimentales del circuito RC.
 
 </p>
 
 
 
+<h2>
+Fundamento del método
+</h2>
+
+
+<p>
+
+La diferencia centrada permite aproximar la derivada utilizando dos puntos alrededor del instante analizado:
+
+</p>
+
+
 <h3>
 
-\[
-\frac{dV}{dt}\approx
-\frac{V(t+h)-V(t-h)}{2h}
-\]
+dV/dt ≈ (V(t+h)-V(t-h))/(2h)
 
 </h3>
 
 
 
-
 <h3>
-Datos utilizados
+Ingrese los parámetros
 </h3>
 
 
 
-<table>
+Tiempo de análisis:
 
+<br>
 
-<tr>
+<input 
+id="tiempo"
+type="number"
+value="30">
 
-<th>
-Tiempo
-</th>
-
-<th>
-Voltaje
-</th>
-
-</tr>
-
-
-<tr>
-<td>20 s</td>
-<td>4.150 V</td>
-</tr>
-
-
-<tr>
-<td>30 s</td>
-<td>4.550 V</td>
-</tr>
-
-
-<tr>
-<td>40 s</td>
-<td>4.710 V</td>
-</tr>
-
-
-</table>
+s
 
 
 
-<h3>
-Punto donde calcular derivada
-</h3>
+<br>
 
 
+Paso h:
 
-<input id="tiempo" value="30">
+<br>
 
-segundos
+<input 
+id="paso"
+type="number"
+value="10">
+
+s
 
 
 
@@ -230,8 +223,6 @@ Calcular derivada
 
 
 
-
-
 <script>
 
 
@@ -239,18 +230,118 @@ function calcular(){
 
 
 
-let t=Number(document.getElementById("tiempo").value);
+// Datos experimentales de carga RC
+
+
+let datosT=[
+
+0,1,2,3,4,5,6,7,8,9,
+
+10,11,12,13,14,15,
+
+16,17,18,19,20,
+
+21,22,23,24,25,
+
+30,40,59,122
+
+];
 
 
 
-let h=10;
+let datosV=[
+
+0.000,0.000,0.390,0.840,1.290,
+
+1.630,1.960,2.300,2.530,2.750,
+
+2.970,3.140,3.310,3.480,3.650,
+
+3.760,3.870,3.930,3.980,4.040,
+
+4.150,4.210,4.270,4.320,4.380,
+
+4.430,4.550,4.710,4.830,4.830
+
+];
 
 
 
-let Vanterior=4.150;
+
+// Datos ingresados
 
 
-let Vposterior=4.710;
+let tiempo=
+
+Number(document.getElementById("tiempo").value);
+
+
+let h=
+
+Number(document.getElementById("paso").value);
+
+
+
+
+
+// Buscar valores cercanos
+
+
+function buscarVoltaje(t){
+
+let cercano=0;
+
+let menor=Math.abs(datosT[0]-t);
+
+
+
+for(let i=1;i<datosT.length;i++){
+
+
+let distancia=Math.abs(datosT[i]-t);
+
+
+if(distancia<menor){
+
+menor=distancia;
+
+cercano=i;
+
+}
+
+
+}
+
+
+return {
+
+t:datosT[cercano],
+
+V:datosV[cercano]
+
+};
+
+
+}
+
+
+
+
+let anterior=
+
+buscarVoltaje(tiempo-h);
+
+
+
+let posterior=
+
+buscarVoltaje(tiempo+h);
+
+
+
+let central=
+
+buscarVoltaje(tiempo);
 
 
 
@@ -261,53 +352,134 @@ let Vposterior=4.710;
 
 let derivada=
 
-(Vposterior-Vanterior)/(2*h);
+(posterior.V-anterior.V)/(2*h);
 
 
 
 
+// Corriente del capacitor
 
 
-// Valor teorico del modelo RC
+let C=0.001;
 
 
-let Vmax=4.830;
+let corriente=
 
-
-let tau=10;
-
-
-
-
-let derivadaTeorica=
-
-(Vmax/tau)*Math.exp(-30/tau);
-
-
-
-
-
-
-let error=
-
-Math.abs(derivadaTeorica-derivada)
-
-/
-
-derivadaTeorica*100;
-
-
+C*derivada;
 
 
 
 
 document.getElementById("resultado").innerHTML=
 
+
 `
 
 <h2>
-
 Resultado obtenido
+</h2>
+
+
+<p>
+
+La derivada representa la rapidez de cambio del voltaje del capacitor en el instante analizado.
+
+</p>
+
+
+
+
+<table>
+
+
+<tr>
+
+<th>
+Punto
+</th>
+
+<th>
+Tiempo
+</th>
+
+<th>
+Voltaje
+</th>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+Anterior
+</td>
+
+<td>
+${anterior.t}s
+</td>
+
+<td>
+${anterior.V}V
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+Central
+</td>
+
+<td>
+${central.t}s
+</td>
+
+<td>
+${central.V}V
+</td>
+
+</tr>
+
+
+
+<tr>
+
+<td>
+Posterior
+</td>
+
+<td>
+${posterior.t}s
+</td>
+
+<td>
+${posterior.V}V
+</td>
+
+</tr>
+
+
+</table>
+
+
+
+
+
+<h2>
+
+dV/dt = ${derivada.toFixed(5)} V/s
+
+</h2>
+
+
+
+<h2>
+
+Corriente del capacitor
 
 </h2>
 
@@ -315,18 +487,15 @@ Resultado obtenido
 
 <p>
 
-Para calcular la derivada en:
+Usando:
 
 <br>
 
-<b>
+I = C(dV/dt)
 
-t = ${t} segundos
+<br>
 
-</b>
-
-
-se utilizan los valores experimentales ubicados antes y después del punto analizado.
+con C = 1000 μF
 
 </p>
 
@@ -334,11 +503,7 @@ se utilizan los valores experimentales ubicados antes y después del punto anali
 
 <h3>
 
-Derivada numérica:
-
-<br>
-
-${derivada.toFixed(5)} V/s
+I = ${(corriente*1000000).toFixed(3)} μA
 
 </h3>
 
@@ -347,70 +512,7 @@ ${derivada.toFixed(5)} V/s
 
 <p>
 
-Esto indica que en ese instante el voltaje del capacitor aumenta aproximadamente:
-
-<br>
-
-<b>
-
-${derivada.toFixed(5)} voltios por segundo
-
-</b>
-
-</p>
-
-
-
-
-<hr>
-
-
-
-
-<h3>
-
-Validación experimental
-
-</h3>
-
-
-
-<p>
-
-Derivada obtenida del modelo matemático RC:
-
-<br>
-
-${derivadaTeorica.toFixed(5)} V/s
-
-
-</p>
-
-
-
-
-<p>
-
-Error relativo:
-
-<br>
-
-<b>
-
-${error.toFixed(3)} %
-
-</b>
-
-</p>
-
-
-
-
-<p>
-
-La diferencia entre ambos valores se debe principalmente a las tolerancias del resistor, capacitor y al error de medición del sistema Arduino.
-
-El método de diferencias centradas permite obtener una aproximación adecuada utilizando únicamente datos experimentales.
+El valor positivo indica que el capacitor está aumentando su voltaje, es decir, continúa en proceso de carga.
 
 </p>
 
@@ -424,7 +526,6 @@ El método de diferencias centradas permite obtener una aproximación adecuada u
 
 
 </script>
-
 
 
 
