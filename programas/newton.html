@@ -9,9 +9,6 @@
 <title>Newton-Raphson Circuito RC</title>
 
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
 <style>
 
 body{
@@ -22,19 +19,6 @@ background:#f4f6f8;
 
 text-align:center;
 
-margin:0;
-
-}
-
-
-header{
-
-background:#003366;
-
-color:white;
-
-padding:25px;
-
 }
 
 
@@ -42,11 +26,11 @@ padding:25px;
 
 background:white;
 
-width:850px;
+width:800px;
 
 max-width:90%;
 
-margin:30px auto;
+margin:40px auto;
 
 padding:30px;
 
@@ -57,12 +41,13 @@ box-shadow:0px 5px 15px #ccc;
 }
 
 
-
 input{
 
 padding:8px;
 
 width:120px;
+
+margin:5px;
 
 }
 
@@ -77,7 +62,7 @@ color:white;
 
 border:none;
 
-border-radius:25px;
+border-radius:20px;
 
 cursor:pointer;
 
@@ -87,32 +72,14 @@ cursor:pointer;
 
 #resultado{
 
-margin:20px;
+margin-top:25px;
 
-font-size:18px;
+text-align:left;
 
-color:#003366;
-
-}
-
-
-
-table{
-
-margin:auto;
-
-border-collapse:collapse;
+line-height:1.6;
 
 }
 
-
-td,th{
-
-border:1px solid #aaa;
-
-padding:8px;
-
-}
 
 
 </style>
@@ -125,8 +92,7 @@ padding:8px;
 <body>
 
 
-
-<header>
+<div class="card">
 
 
 <h1>
@@ -135,59 +101,88 @@ Método Newton-Raphson
 
 
 <p>
-Búsqueda del tiempo donde el capacitor alcanza un voltaje objetivo
+
+Determinación del instante en que el capacitor alcanza un voltaje objetivo durante la carga del circuito RC.
+
 </p>
 
 
-</header>
-
-
-
-
-<div class="card">
-
-
-<h2>
+<h3>
 Fundamento del método
-</h2>
+</h3>
 
 
 <p>
 
-Newton-Raphson permite encontrar raíces de una función mediante aproximaciones sucesivas.
+El método de Newton-Raphson permite encontrar raíces de una función mediante aproximaciones sucesivas.
 
-Para este caso se busca el instante donde:
+</p>
+
+
+<p>
+
+La condición buscada es:
 
 </p>
 
 
 <h3>
 
-f(t)=V(t)-4.000=0
+f(t)=Vmax(1-e<sup>-t/τ</sup>)-Vobjetivo = 0
 
 </h3>
 
 
 <p>
 
-Es decir, el tiempo donde el capacitor alcanza 4 voltios.
+La ecuación iterativa utilizada es:
 
 </p>
 
 
+<h3>
 
-<h2>
-Parámetros
-</h2>
+t<sub>n+1</sub>=t<sub>n</sub>-f(t)/f'(t)
 
+</h3>
+
+
+
+
+<h3>
+Parámetros del circuito
+</h3>
+
+
+Voltaje final:
+
+<input id="Vmax" value="4.830">
+
+<br>
 
 
 Voltaje objetivo:
 
-<input id="objetivo" value="4.000"> V
+<input id="Vobj" value="4.000">
+
+<br>
+
+
+Constante de tiempo τ(s):
+
+<input id="tau" value="10">
 
 
 <br><br>
+
+
+Valor inicial:
+
+<input id="inicio" value="15">
+
+
+<br><br>
+
 
 
 <button onclick="calcular()">
@@ -203,10 +198,8 @@ Ejecutar Newton-Raphson
 
 
 
-<canvas id="grafica"></canvas>
-
-
 </div>
+
 
 
 
@@ -215,57 +208,69 @@ Ejecutar Newton-Raphson
 <script>
 
 
-let grafico;
-
-
-
 function calcular(){
 
 
 
-let Vmax=4.830;
+let Vmax=
 
-let tau=10;
-
-
-
-let Vobjetivo=
-
-Number(document.getElementById("objetivo").value);
+Number(document.getElementById("Vmax").value);
 
 
+let Vobj=
+
+Number(document.getElementById("Vobj").value);
 
 
-// Función
+let tau=
+
+Number(document.getElementById("tau").value);
+
+
+let t=
+
+Number(document.getElementById("inicio").value);
+
+
+
+
+let tolerancia=0.0001;
+
+
+let iteraciones="";
+
+
+
 
 
 function f(t){
 
-return Vmax*(1-Math.exp(-t/tau))-Vobjetivo;
+
+return Vmax*(1-Math.exp(-t/tau))-Vobj;
+
 
 }
 
 
-
-// Derivada
 
 
 function df(t){
 
+
 return (Vmax/tau)*Math.exp(-t/tau);
+
 
 }
 
 
 
 
-let t=15;
 
-let iteraciones=[];
-
+let contador=0;
 
 
-for(let i=0;i<20;i++){
+
+while(contador<20){
 
 
 
@@ -275,17 +280,35 @@ t-f(t)/df(t);
 
 
 
-iteraciones.push({
+let error=
 
-n:i+1,
-
-valor:nuevo
-
-});
+Math.abs(nuevo-t);
 
 
 
-if(Math.abs(nuevo-t)<0.0001){
+iteraciones+=
+
+`
+
+Iteración ${contador+1}
+
+<br>
+
+t = ${nuevo.toFixed(6)} s
+
+<br>
+
+Error = ${error.toFixed(6)}
+
+<br><br>
+
+`;
+
+
+
+
+
+if(error<tolerancia){
 
 t=nuevo;
 
@@ -294,7 +317,10 @@ break;
 }
 
 
+
 t=nuevo;
+
+contador++;
 
 
 }
@@ -302,294 +328,104 @@ t=nuevo;
 
 
 
-let resultadoTexto=`
 
-<h3>Resultado</h3>
 
-Tiempo encontrado:
+// valor experimental del informe
 
-<b>${t.toFixed(4)} segundos</b>
-
-<br><br>
-
-Iteraciones:
-
-<table>
-
-<tr>
-
-<th>
-n
-</th>
-
-<th>
-Tiempo(s)
-</th>
-
-</tr>
-
-`;
+let tExperimental=18.0;
 
 
 
-iteraciones.forEach(x=>{
+let errorRelativo=
 
+Math.abs(tExperimental-t)
 
-resultadoTexto+=`
+/
 
-<tr>
-
-<td>${x.n}</td>
-
-<td>${x.valor.toFixed(6)}</td>
-
-</tr>
-
-
-`;
-
-
-});
+tExperimental*100;
 
 
 
-resultadoTexto+="</table>";
 
 
 
 document.getElementById("resultado").innerHTML=
 
-resultadoTexto;
 
+`
 
+<h2>Resultado final</h2>
 
 
 
+<p>
 
-// Datos experimentales carga
+El método Newton-Raphson converge cuando la diferencia entre dos aproximaciones consecutivas es menor que la tolerancia establecida.
 
+</p>
 
-let tiempo=[
 
-0,1,2,3,4,5,6,7,8,9,
 
-10,11,12,13,14,15,
+<h3>
 
-16,17,18,19,20,21,22,
+Tiempo calculado:
 
-23,24,25,30,40,59,122
+<br>
 
-];
+${t.toFixed(4)} segundos
 
+</h3>
 
 
-let voltaje=[
 
-0,0,0.390,0.840,1.290,
 
-1.630,1.960,2.300,2.530,
+<p>
 
-2.750,2.970,3.140,
+<b>Comparación experimental:</b>
 
-3.310,3.480,3.650,
+<br><br>
 
-3.760,3.870,3.930,
 
-3.980,4.040,4.150,
+Tiempo medido mediante Arduino:
 
-4.210,4.270,4.320,
+${tExperimental.toFixed(2)} s
 
-4.380,4.430,4.550,
 
-4.710,4.830,4.830
+<br><br>
 
-];
 
+Error relativo:
 
+${errorRelativo.toFixed(3)} %
 
+</p>
 
-// Curva teorica
 
 
-let curva=[];
+<hr>
 
 
-for(let i=0;i<=60;i+=0.5){
 
+<h3>
 
-curva.push({
+Proceso de convergencia
 
-x:i,
+</h3>
 
-y:Vmax*(1-Math.exp(-i/tau))
 
-});
+${iteraciones}
 
 
-}
 
+<p>
 
+El resultado obtenido demuestra que el método numérico permite determinar el instante donde el capacitor alcanza el voltaje establecido sin necesidad de resolver directamente la ecuación exponencial.
 
+</p>
 
 
-if(grafico){
+`;
 
-grafico.destroy();
-
-}
-
-
-
-
-grafico=new Chart(
-
-document.getElementById("grafica"),
-
-{
-
-
-type:"line",
-
-
-data:{
-
-
-datasets:[
-
-
-
-{
-
-label:"Modelo de carga RC",
-
-data:curva,
-
-borderWidth:3,
-
-pointRadius:0
-
-},
-
-
-
-{
-
-label:"Datos experimentales Arduino",
-
-data:tiempo.map((x,i)=>({
-
-x:x,
-
-y:voltaje[i]
-
-})),
-
-type:"scatter",
-
-pointRadius:5
-
-},
-
-
-
-
-{
-
-label:"Voltaje objetivo 4V",
-
-data:[
-
-{x:0,y:Vobjetivo},
-
-{x:60,y:Vobjetivo}
-
-],
-
-borderWidth:2,
-
-pointRadius:0
-
-},
-
-
-
-{
-
-label:"Raíz Newton-Raphson",
-
-data:[{
-
-x:t,
-
-y:Vobjetivo
-
-}],
-
-
-type:"scatter",
-
-pointRadius:8
-
-}
-
-
-
-]
-
-
-},
-
-
-
-
-options:{
-
-
-scales:{
-
-
-x:{
-
-title:{
-
-display:true,
-
-text:"Tiempo (s)"
-
-}
-
-},
-
-
-y:{
-
-title:{
-
-display:true,
-
-text:"Voltaje(V)"
-
-},
-
-min:0,
-
-max:5
-
-}
-
-
-}
-
-
-}
-
-
-
-}
-
-
-
-);
 
 
 }
