@@ -1,67 +1,240 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora RC</title>
 
-    <style>
-        body{
-            font-family: Arial, sans-serif;
-            text-align:center;
-            margin-top:50px;
-            background:#f5f5f5;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        input{
-            padding:8px;
-            margin:5px;
-            width:180px;
-        }
+<title>Análisis Numérico Circuito RC</title>
 
-        button{
-            padding:10px 20px;
-            cursor:pointer;
-        }
+<style>
 
-        #resultado{
-            margin-top:20px;
-            font-size:22px;
-            font-weight:bold;
-            color:blue;
-        }
-    </style>
+body{
+    font-family: Arial, sans-serif;
+    margin:0;
+    background:#f4f6f8;
+}
+
+header{
+    background:#003366;
+    color:white;
+    padding:25px;
+    text-align:center;
+}
+
+nav{
+    background:#00509e;
+    padding:15px;
+    text-align:center;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin:15px;
+    font-weight:bold;
+}
+
+
+section{
+    padding:40px;
+    text-align:center;
+}
+
+
+.card{
+    background:white;
+    margin:20px auto;
+    padding:25px;
+    max-width:800px;
+    border-radius:10px;
+    box-shadow:0px 0px 10px #ccc;
+}
+
+
+button{
+
+background:#00509e;
+color:white;
+padding:12px 25px;
+border:none;
+border-radius:5px;
+
+}
+
+</style>
+
 </head>
+
 
 <body>
 
-<h1>Calculadora de Circuito RC</h1>
 
-<input id="R" type="number" placeholder="Resistencia (Ω)"><br>
+<header>
 
-<input id="C" type="number" placeholder="Capacitancia (F)"><br>
+<h1>
+Análisis Numérico del Circuito RC
+</h1>
 
-<input id="t" type="number" placeholder="Tiempo (s)"><br><br>
+<p>
+Carga y descarga de un capacitor mediante métodos de aproximación matemática
+</p>
 
-<button onclick="calcular()">Calcular</button>
+<p>
+Universidad Nacional Mayor de San Marcos
+</p>
 
-<div id="resultado"></div>
+</header>
 
-<script>
-function calcular(){
 
-    let R = parseFloat(document.getElementById("R").value);
-    let C = parseFloat(document.getElementById("C").value);
-    let t = parseFloat(document.getElementById("t").value);
 
-    let V0 = 5;
+<nav>
 
-    let V = V0 * Math.exp(-t/(R*C));
+<a href="#inicio">Inicio</a>
 
-    document.getElementById("resultado").innerHTML =
-        "Voltaje = " + V.toFixed(4) + " V";
-}
-</script>
+<a href="#teoria">Teoría</a>
+
+<a href="#programas">Programas</a>
+
+<a href="#video">Video</a>
+
+<a href="#informe">Informe</a>
+
+
+</nav>
+
+
+
+<section id="inicio">
+
+
+<div class="card">
+
+<h2>
+Proyecto de Métodos Numéricos
+</h2>
+
+
+<p>
+
+Aplicación web interactiva para analizar el comportamiento dinámico de un circuito RC mediante métodos numéricos e información experimental obtenida mediante Arduino.
+
+</p>
+
+
+<button>
+Ingresar a la aplicación
+</button>
+
+
+</div>
+
+
+</section>
+
+
+
+<section id="teoria">
+
+<div class="card">
+
+<h2>
+Fundamento Teórico
+</h2>
+
+
+<p>
+Un circuito RC está formado por una resistencia y un capacitor, cuyo comportamiento temporal está descrito mediante una ecuación diferencial de primer orden.
+</p>
+
+
+</div>
+
+</section>
+
+
+
+
+<section id="programas">
+
+<div class="card">
+
+<h2>
+Métodos Numéricos Implementados
+</h2>
+
+
+<p>
+1. Interpolación de Newton de segundo orden
+</p>
+
+<p>
+2. Newton-Raphson
+</p>
+
+<p>
+3. Derivación numérica
+</p>
+
+<p>
+4. Integración numérica
+</p>
+
+<p>
+5. Runge-Kutta de cuarto orden
+</p>
+
+
+</div>
+
+</section>
+
+
+
+
+<section id="video">
+
+<div class="card">
+
+<h2>
+Video demostrativo
+</h2>
+
+<p>
+Aquí se agregará el video del experimento.
+</p>
+
+
+</div>
+
+</section>
+
+
+
+
+<section id="informe">
+
+
+<div class="card">
+
+<h2>
+Informe PDF
+</h2>
+
+
+<p>
+Aquí estará disponible la descarga del informe completo.
+</p>
+
+
+</div>
+
+
+</section>
+
+
 
 </body>
+
 </html>
