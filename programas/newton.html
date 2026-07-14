@@ -9,11 +9,14 @@
 <title>Newton-Raphson Circuito RC</title>
 
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 <style>
 
 body{
 
-font-family:Arial, sans-serif;
+font-family:Arial;
 
 background:#f4f6f8;
 
@@ -39,24 +42,25 @@ padding:25px;
 
 background:white;
 
-max-width:700px;
+width:850px;
 
-margin:40px auto;
+max-width:90%;
+
+margin:30px auto;
 
 padding:30px;
 
 border-radius:15px;
 
-box-shadow:0px 5px 15px rgba(0,0,0,0.15);
+box-shadow:0px 5px 15px #ccc;
 
 }
 
 
+
 input{
 
-padding:10px;
-
-margin:5px;
+padding:8px;
 
 width:120px;
 
@@ -65,13 +69,13 @@ width:120px;
 
 button{
 
+padding:12px 25px;
+
 background:#00509e;
 
 color:white;
 
 border:none;
-
-padding:12px 25px;
 
 border-radius:25px;
 
@@ -80,29 +84,22 @@ cursor:pointer;
 }
 
 
-button:hover{
-
-background:#003366;
-
-}
-
 
 #resultado{
 
-margin-top:25px;
+margin:20px;
 
-font-size:20px;
-
-font-weight:bold;
+font-size:18px;
 
 color:#003366;
 
 }
 
 
+
 table{
 
-margin:20px auto;
+margin:auto;
 
 border-collapse:collapse;
 
@@ -131,15 +128,19 @@ padding:8px;
 
 <header>
 
+
 <h1>
 Método Newton-Raphson
 </h1>
 
+
 <p>
-Cálculo del tiempo donde el capacitor alcanza un voltaje objetivo
+Búsqueda del tiempo donde el capacitor alcanza un voltaje objetivo
 </p>
 
+
 </header>
+
 
 
 
@@ -147,61 +148,54 @@ Cálculo del tiempo donde el capacitor alcanza un voltaje objetivo
 
 
 <h2>
-Parámetros del circuito RC
+Fundamento del método
 </h2>
 
 
 <p>
-Ingrese los valores del modelo de carga:
+
+Newton-Raphson permite encontrar raíces de una función mediante aproximaciones sucesivas.
+
+Para este caso se busca el instante donde:
+
+</p>
+
+
+<h3>
+
+f(t)=V(t)-4.000=0
+
+</h3>
+
+
+<p>
+
+Es decir, el tiempo donde el capacitor alcanza 4 voltios.
+
 </p>
 
 
 
-<label>
-Voltaje máximo:
-</label>
-
-<input id="Vmax" type="number" value="4.830">
-
-<br>
+<h2>
+Parámetros
+</h2>
 
 
-<label>
-Constante RC (τ):
-</label>
 
-<input id="tau" type="number" value="10">
-
-
-<br>
-
-
-<label>
 Voltaje objetivo:
-</label>
 
-<input id="Vobj" type="number" value="4.000">
-
-
-<br>
-
-
-<label>
-Valor inicial:
-</label>
-
-<input id="t0" type="number" value="15">
+<input id="objetivo" value="4.000"> V
 
 
 <br><br>
 
 
-
 <button onclick="calcular()">
 
-Calcular
+Ejecutar Newton-Raphson
 
 </button>
+
 
 
 
@@ -209,27 +203,7 @@ Calcular
 
 
 
-<table id="tabla">
-
-<tr>
-
-<th>
-Iteración
-</th>
-
-<th>
-Tiempo (s)
-</th>
-
-<th>
-Error
-</th>
-
-</tr>
-
-
-</table>
-
+<canvas id="grafica"></canvas>
 
 
 </div>
@@ -241,61 +215,39 @@ Error
 <script>
 
 
+let grafico;
+
+
+
 function calcular(){
 
 
 
-let Vmax =
-Number(document.getElementById("Vmax").value);
+let Vmax=4.830;
 
-
-let tau =
-Number(document.getElementById("tau").value);
-
-
-let Vobj =
-Number(document.getElementById("Vobj").value);
+let tau=10;
 
 
 
-let t =
-Number(document.getElementById("t0").value);
+let Vobjetivo=
+
+Number(document.getElementById("objetivo").value);
 
 
 
-let tolerancia = 0.0001;
 
-
-let maxIter = 20;
-
-
-
-let tabla =
-document.getElementById("tabla");
-
-
-
-tabla.innerHTML =
-
-`
-<tr>
-<th>Iteración</th>
-<th>Tiempo (s)</th>
-<th>Error</th>
-</tr>
-`;
-
-
-
+// Función
 
 
 function f(t){
 
-return Vmax*(1-Math.exp(-t/tau))-Vobj;
+return Vmax*(1-Math.exp(-t/tau))-Vobjetivo;
 
 }
 
 
+
+// Derivada
 
 
 function df(t){
@@ -307,55 +259,341 @@ return (Vmax/tau)*Math.exp(-t/tau);
 
 
 
-for(let i=0;i<maxIter;i++){
+let t=15;
+
+let iteraciones=[];
 
 
 
-let nuevo = t - f(t)/df(t);
-
-
-let error = Math.abs(nuevo-t);
+for(let i=0;i<20;i++){
 
 
 
-let fila = tabla.insertRow();
+let nuevo=
+
+t-f(t)/df(t);
 
 
 
-fila.insertCell(0).innerHTML=i+1;
+iteraciones.push({
 
-fila.insertCell(1).innerHTML=nuevo.toFixed(6);
+n:i+1,
 
-fila.insertCell(2).innerHTML=error.toFixed(6);
+valor:nuevo
+
+});
 
 
+
+if(Math.abs(nuevo-t)<0.0001){
 
 t=nuevo;
-
-
-
-if(error<tolerancia){
 
 break;
 
 }
 
 
+t=nuevo;
+
+
 }
 
 
+
+
+let resultadoTexto=`
+
+<h3>Resultado</h3>
+
+Tiempo encontrado:
+
+<b>${t.toFixed(4)} segundos</b>
+
+<br><br>
+
+Iteraciones:
+
+<table>
+
+<tr>
+
+<th>
+n
+</th>
+
+<th>
+Tiempo(s)
+</th>
+
+</tr>
+
+`;
+
+
+
+iteraciones.forEach(x=>{
+
+
+resultadoTexto+=`
+
+<tr>
+
+<td>${x.n}</td>
+
+<td>${x.valor.toFixed(6)}</td>
+
+</tr>
+
+
+`;
+
+
+});
+
+
+
+resultadoTexto+="</table>";
 
 
 
 document.getElementById("resultado").innerHTML=
 
-"Tiempo calculado = "
-+t.toFixed(4)
-+" segundos";
+resultadoTexto;
+
+
+
+
+
+
+// Datos experimentales carga
+
+
+let tiempo=[
+
+0,1,2,3,4,5,6,7,8,9,
+
+10,11,12,13,14,15,
+
+16,17,18,19,20,21,22,
+
+23,24,25,30,40,59,122
+
+];
+
+
+
+let voltaje=[
+
+0,0,0.390,0.840,1.290,
+
+1.630,1.960,2.300,2.530,
+
+2.750,2.970,3.140,
+
+3.310,3.480,3.650,
+
+3.760,3.870,3.930,
+
+3.980,4.040,4.150,
+
+4.210,4.270,4.320,
+
+4.380,4.430,4.550,
+
+4.710,4.830,4.830
+
+];
+
+
+
+
+// Curva teorica
+
+
+let curva=[];
+
+
+for(let i=0;i<=60;i+=0.5){
+
+
+curva.push({
+
+x:i,
+
+y:Vmax*(1-Math.exp(-i/tau))
+
+});
+
+
+}
+
+
+
+
+
+if(grafico){
+
+grafico.destroy();
+
+}
+
+
+
+
+grafico=new Chart(
+
+document.getElementById("grafica"),
+
+{
+
+
+type:"line",
+
+
+data:{
+
+
+datasets:[
+
+
+
+{
+
+label:"Modelo de carga RC",
+
+data:curva,
+
+borderWidth:3,
+
+pointRadius:0
+
+},
+
+
+
+{
+
+label:"Datos experimentales Arduino",
+
+data:tiempo.map((x,i)=>({
+
+x:x,
+
+y:voltaje[i]
+
+})),
+
+type:"scatter",
+
+pointRadius:5
+
+},
+
+
+
+
+{
+
+label:"Voltaje objetivo 4V",
+
+data:[
+
+{x:0,y:Vobjetivo},
+
+{x:60,y:Vobjetivo}
+
+],
+
+borderWidth:2,
+
+pointRadius:0
+
+},
+
+
+
+{
+
+label:"Raíz Newton-Raphson",
+
+data:[{
+
+x:t,
+
+y:Vobjetivo
+
+}],
+
+
+type:"scatter",
+
+pointRadius:8
+
+}
+
+
+
+]
+
+
+},
+
+
+
+
+options:{
+
+
+scales:{
+
+
+x:{
+
+title:{
+
+display:true,
+
+text:"Tiempo (s)"
+
+}
+
+},
+
+
+y:{
+
+title:{
+
+display:true,
+
+text:"Voltaje(V)"
+
+},
+
+min:0,
+
+max:5
+
+}
+
+
+}
+
+
+}
 
 
 
 }
+
+
+
+);
+
+
+}
+
 
 
 </script>
