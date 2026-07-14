@@ -1,248 +1,93 @@
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Análisis Numérico Circuito RC</title>
+<title>Integración Numérica RC</title>
 
 
 <style>
 
-*{
-    box-sizing:border-box;
-}
-
-
 body{
 
-    font-family:Arial, sans-serif;
+font-family:Arial;
 
-    margin:0;
+background:#f4f6f8;
 
-    background:#f4f6f8;
-
-    color:#333;
+text-align:center;
 
 }
 
-
-/* CABECERA */
-
-header{
-
-    background:#003366;
-
-    color:white;
-
-    padding:35px;
-
-    text-align:center;
-
-}
-
-
-header h1{
-
-    font-size:35px;
-
-}
-
-
-
-/* MENU */
-
-nav{
-
-    background:#00509e;
-
-    padding:15px;
-
-    text-align:center;
-
-}
-
-
-nav a{
-
-    color:white;
-
-    text-decoration:none;
-
-    margin:15px;
-
-    font-weight:bold;
-
-}
-
-
-nav a:hover{
-
-    color:#dbeeff;
-
-}
-
-
-
-/* SECCIONES */
-
-section{
-
-    padding:40px;
-
-    text-align:center;
-
-}
-
-
-
-/* TARJETAS GENERALES */
 
 .card{
 
-    background:white;
+background:white;
 
-    max-width:850px;
+width:850px;
 
-    margin:25px auto;
+max-width:90%;
 
-    padding:30px;
+margin:40px auto;
 
-    border-radius:15px;
+padding:30px;
 
-    box-shadow:0px 5px 15px rgba(0,0,0,0.15);
+border-radius:15px;
 
-}
-
-
-
-/* IMAGEN */
-
-img{
-
-    max-width:90%;
-
-    border-radius:10px;
-
-    margin:20px;
+box-shadow:0px 5px 15px #ccc;
 
 }
 
-
-
-/* BOTONES */
 
 button{
 
-    background:#00509e;
+padding:12px 25px;
 
-    color:white;
+background:#00509e;
 
-    border:none;
+color:white;
 
-    padding:12px 25px;
+border:none;
 
-    border-radius:25px;
+border-radius:20px;
 
-    cursor:pointer;
-
-}
-
-
-button:hover{
-
-    background:#003366;
-
-}
-
-
-a{
-
-    text-decoration:none;
+cursor:pointer;
 
 }
 
 
 
-/* PROGRAMAS */
+table{
 
+margin:20px auto;
 
-.programas-container{
-
-    display:flex;
-
-    flex-wrap:wrap;
-
-    justify-content:center;
-
-    gap:25px;
+border-collapse:collapse;
 
 }
 
 
 
-.programa-card{
+th,td{
 
+border:1px solid #aaa;
 
-    background:white;
-
-    width:280px;
-
-    padding:25px;
-
-    border-radius:15px;
-
-    box-shadow:0px 5px 15px rgba(0,0,0,0.15);
-
-    transition:0.3s;
-
+padding:8px 15px;
 
 }
 
 
 
-.programa-card:hover{
+#resultado{
 
-    transform:translateY(-8px);
+text-align:left;
 
-}
+line-height:1.7;
 
-
-
-.programa-card h3{
-
-    color:#003366;
+margin-top:25px;
 
 }
-
-
-
-.programa-card p{
-
-    color:#555;
-
-    line-height:1.5;
-
-}
-
-
-
-/* PIE */
-
-footer{
-
-    background:#003366;
-
-    color:white;
-
-    text-align:center;
-
-    padding:15px;
-
-}
-
 
 
 </style>
@@ -255,422 +100,368 @@ footer{
 <body>
 
 
-<header>
+
+<div class="card">
+
 
 
 <h1>
-Análisis Numérico del Circuito RC
+Integración Numérica
 </h1>
 
 
-<p>
-Carga y descarga de un capacitor mediante métodos de aproximación matemática
-</p>
-
-
-<p>
-Universidad Nacional Mayor de San Marcos
-</p>
-
-
-</header>
-
-
-
-<nav>
-
-
-<a href="#inicio">
-Inicio
-</a>
-
-
-<a href="#teoria">
-Teoría
-</a>
-
-
-<a href="#programas">
-Programas
-</a>
-
-
-<a href="#video">
-Video
-</a>
-
-
-<a href="#informe">
-Informe
-</a>
-
-
-</nav>
-
-
-
-
-
-<section id="inicio">
-
-
-<div class="card">
-
 
 <h2>
-Proyecto de Métodos Numéricos
+Regla del Trapecio Compuesta
 </h2>
 
 
-<img src="Circuito RC.png" 
-alt="Circuito RC experimental"
-width="450">
-
 
 <p>
 
-Aplicación web interactiva para analizar el comportamiento dinámico de un circuito RC mediante métodos numéricos y datos experimentales obtenidos mediante Arduino.
+La integración numérica permite calcular el área bajo una curva cuando solamente se tienen datos experimentales discretos.
+
+En este caso se calcula la energía acumulada representada mediante la integral del voltaje del capacitor durante la carga.
 
 </p>
 
 
 
-<a href="#programas">
+<h3>
 
-<button>
+A = Σ ((V<sub>i</sub> + V<sub>i-1</sub>)/2) Δt
 
-Ingresar a los programas
+</h3>
+
+
+
+
+<h3>
+Datos experimentales utilizados
+</h3>
+
+
+
+<table>
+
+
+<tr>
+
+<th>
+Tiempo (s)
+</th>
+
+<th>
+Voltaje (V)
+</th>
+
+</tr>
+
+
+<tr><td>0</td><td>0.000</td></tr>
+<tr><td>2</td><td>0.390</td></tr>
+<tr><td>5</td><td>1.630</td></tr>
+<tr><td>10</td><td>2.970</td></tr>
+<tr><td>20</td><td>4.150</td></tr>
+<tr><td>30</td><td>4.550</td></tr>
+<tr><td>60</td><td>4.830</td></tr>
+
+
+</table>
+
+
+
+
+<button onclick="calcular()">
+
+Calcular integral
 
 </button>
 
-</a>
+
+
+<div id="resultado"></div>
+
 
 
 
 </div>
 
 
-</section>
+
+
+
+
+
+<script>
+
+
+
+function calcular(){
+
+
+
+let t=[
+
+0,
+
+2,
+
+5,
+
+10,
+
+20,
+
+30,
+
+60
+
+];
+
+
+
+let V=[
+
+0.000,
+
+0.390,
+
+1.630,
+
+2.970,
+
+4.150,
+
+4.550,
+
+4.830
+
+];
+
+
+
+
+
+let area=0;
+
+
+
+let detalle="";
 
 
 
 
 
 
-<section id="teoria">
+for(let i=1;i<t.length;i++){
 
 
-<div class="card">
 
+let h=t[i]-t[i-1];
+
+
+
+let areaParcial=
+
+((V[i]+V[i-1])*h)/2;
+
+
+
+area+=areaParcial;
+
+
+
+detalle+=
+
+`
+
+<b>Intervalo ${t[i-1]} s a ${t[i]} s</b>
+
+<br>
+
+Δt = ${h} s
+
+<br>
+
+Área parcial = ${areaParcial.toFixed(4)} V·s
+
+<br><br>
+
+`;
+
+
+
+}
+
+
+
+
+
+
+
+let promedio=
+
+area/60;
+
+
+
+
+
+// Modelo teorico
+
+
+let Vmax=4.830;
+
+
+let tau=10;
+
+
+
+let integralTeorica=
+
+Vmax*
+
+(
+
+60+
+
+tau*Math.exp(-60/tau)
+
+-tau
+
+);
+
+
+
+
+let promedioTeorico=
+
+integralTeorica/60;
+
+
+
+
+
+let error=
+
+Math.abs(promedio-promedioTeorico)
+
+/
+
+promedioTeorico*100;
+
+
+
+
+
+
+
+document.getElementById("resultado").innerHTML=
+
+
+`
 
 <h2>
-Fundamento Teórico
+
+Resultados obtenidos
+
 </h2>
 
 
-<p>
-
-Un circuito RC está formado por una resistencia y un capacitor. Su comportamiento temporal está gobernado por una ecuación diferencial de primer orden que describe los procesos de carga y descarga del capacitor.
-
-</p>
-
 
 <p>
 
-En este proyecto se aplican métodos numéricos como interpolación, Newton-Raphson, derivación, integración y Runge-Kutta para analizar datos experimentales.
+El área calculada mediante la suma de trapecios representa la integral aproximada del voltaje del capacitor durante los primeros 60 segundos.
 
 </p>
 
-
-</div>
-
-
-</section>
-
-<section id="programas">
-
-
-<h2>
-💻 Métodos Numéricos Implementados
-</h2>
-
-
-<p>
-
-Programas interactivos desarrollados para analizar el comportamiento dinámico del circuito RC mediante métodos numéricos y datos experimentales obtenidos mediante Arduino.
-
-</p>
-
-
-
-
-<div class="programas-container">
-
-
-
-<div class="programa-card">
 
 
 <h3>
-1. Interpolación de Newton de Segundo Orden
+
+Área total:
+
+<br>
+
+${area.toFixed(4)} V·s
+
 </h3>
+
+
 
 
 <p>
 
-Estimación del voltaje del capacitor en un instante determinado utilizando datos experimentales de tiempo y voltaje.
+Voltaje promedio experimental:
+
+<br>
+
+<b>${promedio.toFixed(4)} V</b>
+
 
 </p>
 
 
-<a href="programas/interpolacion.html">
-
-<button>
-
-Abrir programa
-
-</button>
-
-</a>
 
 
-</div>
+<p>
 
+Voltaje promedio teórico:
+
+<br>
+
+${promedioTeorico.toFixed(4)} V
+
+</p>
 
 
 
 
-<div class="programa-card">
+<p>
+
+Error relativo:
+
+<br>
+
+<b>${error.toFixed(3)} %</b>
+
+</p>
+
+
+
+<hr>
+
 
 
 <h3>
-2. Newton-Raphson
+
+Cálculo de áreas parciales
+
 </h3>
 
 
-<p>
 
-Determinación del instante en que el capacitor alcanza un voltaje objetivo durante la etapa de carga.
+${detalle}
 
-</p>
-
-
-<a href="programas/newton.html">
-
-<button>
-
-Abrir programa
-
-</button>
-
-</a>
-
-
-</div>
-
-
-
-
-
-
-<div class="programa-card">
-
-
-<h3>
-3. Derivación Numérica
-</h3>
 
 
 <p>
 
-Cálculo de la variación del voltaje respecto al tiempo mediante diferencias finitas centradas.
+El bajo error obtenido indica que la regla del trapecio permite aproximar adecuadamente la evolución temporal del voltaje del capacitor usando únicamente mediciones discretas.
 
 </p>
 
 
-<a href="programas/derivacion.html">
+`;
 
-<button>
 
-Abrir programa
 
-</button>
+}
 
-</a>
 
 
-</div>
-
-
-
-
-
-
-
-<div class="programa-card">
-
-
-<h3>
-4. Integración Numérica
-</h3>
-
-
-<p>
-
-Cálculo del área bajo la curva del voltaje mediante la regla del trapecio compuesta.
-
-</p>
-
-
-<a href="programas/integracion.html">
-
-<button>
-
-Abrir programa
-
-</button>
-
-</a>
-
-
-</div>
-
-
-
-
-
-
-
-
-<div class="programa-card">
-
-
-<h3>
-5. Runge-Kutta de Cuarto Orden (RK4)
-</h3>
-
-
-<p>
-
-Simulación de la descarga del capacitor resolviendo la ecuación diferencial del circuito RC.
-
-</p>
-
-
-<a href="programas/rk4.html">
-
-<button>
-
-Abrir programa
-
-</button>
-
-</a>
-
-
-</div>
-
-
-
-</div>
-
-
-</section>
-
-
-<section id="video">
-
-
-<div class="card">
-
-
-<h2>
-🎥 Video demostrativo
-</h2>
-
-
-<p>
-Montaje experimental y análisis numérico del circuito RC.
-</p>
-
-
-
-<iframe
-
-src="https://drive.google.com/file/d/1rGPbFBduSwrRRCDCrxstD7eVeQJ4YY9B/view?usp=sharing"
-
-width="640"
-
-height="360"
-
-allow="autoplay"
-
-allowfullscreen>
-
-</iframe>
-
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-<section id="informe">
-
-
-<div class="card">
-
-
-<h2>
-📄 Descargar Informe PDF
-</h2>
-
-
-<p>
-
-Acceda al informe completo del análisis numérico del circuito RC.
-
-</p>
-
-
-
-<a href="Proyecto final - Metodos Numericos.pdf" target="_blank">
-
-
-<button>
-
-Abrir Informe PDF
-
-</button>
-
-
-</a>
-
-
-
-</div>
-
-
-</section>
-
-
-
-<footer>
-
-
-<p>
-
-Cancho Luis - Métodos Numéricos 2026
-
-</p>
-
-
-</footer>
+</script>
 
 
 
