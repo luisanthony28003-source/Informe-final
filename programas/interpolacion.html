@@ -1,362 +1,115 @@
-<!DOCTYPE html>
-
-<html lang="es">
-
-<head>
-
-<meta charset="UTF-8">
-
-<title>Interpolación Newton RC</title>
-
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-
-<style>
-
-
-body{
-
-font-family:Arial, sans-serif;
-
-background:#f4f6f8;
-
-text-align:center;
-
-margin:0;
-
-}
-
-
-header{
-
-background:#003366;
-
-color:white;
-
-padding:25px;
-
-}
-
-
-
-.card{
-
-background:white;
-
-width:850px;
-
-max-width:90%;
-
-margin:30px auto;
-
-padding:30px;
-
-border-radius:15px;
-
-box-shadow:0px 5px 15px rgba(0,0,0,0.15);
-
-}
-
-
-
-input{
-
-padding:8px;
-
-margin:5px;
-
-width:100px;
-
-}
-
-
-
-button{
-
-padding:12px 25px;
-
-background:#00509e;
-
-color:white;
-
-border:none;
-
-border-radius:25px;
-
-cursor:pointer;
-
-}
-
-
-button:hover{
-
-background:#003366;
-
-}
-
-
-
-table{
-
-margin:20px auto;
-
-border-collapse:collapse;
-
-}
-
-
-
-td,th{
-
-border:1px solid #aaa;
-
-padding:8px 15px;
-
-}
-
-
-
-#resultado{
-
-margin-top:20px;
-
-font-size:20px;
-
-font-weight:bold;
-
-color:#003366;
-
-}
-
-
-
-canvas{
-
-margin-top:30px;
-
-}
-
-
-
-</style>
-
-
-</head>
-
-
-
-
-<body>
-
-
-
-<header>
-
-<h1>
-Interpolación de Newton de Segundo Orden
-</h1>
-
-<p>
-Estimación del voltaje del capacitor mediante datos experimentales del circuito RC.
-</p>
-
-</header>
-
-
-
-
-
-<div class="card">
-
-
-<h2>
-Fundamento del método
-</h2>
-
-
-<p>
-
-La interpolación de Newton permite estimar valores desconocidos mediante un polinomio construido a partir de puntos experimentales conocidos.
-
-En este caso se utilizan tres nodos de tiempo-voltaje para aproximar el voltaje del capacitor en un instante determinado.
-
-</p>
-
-
-
-<h2>
-Nodos experimentales utilizados
-</h2>
-
-
-
-<table>
-
-
-<tr>
-
-<th>
-Nodo
-</th>
-
-<th>
-Tiempo (s)
-</th>
-
-<th>
-Voltaje (V)
-</th>
-
-</tr>
-
-
-<tr>
-
-<td>
-1
-</td>
-
-<td>
-<input id="t1" value="15">
-
-</td>
-
-<td>
-<input id="v1" value="3.760">
-
-</td>
-
-</tr>
-
-
-<tr>
-
-<td>
-2
-</td>
-
-<td>
-<input id="t2" value="20">
-
-</td>
-
-<td>
-<input id="v2" value="4.150">
-
-</td>
-
-</tr>
-
-
-
-<tr>
-
-<td>
-3
-</td>
-
-<td>
-<input id="t3" value="30">
-
-</td>
-
-<td>
-<input id="v3" value="4.550">
-
-</td>
-
-</tr>
-
-
-</table>
-
-
-
-
-<h3>
-Tiempo a estimar
-</h3>
-
-
-<input id="tx" value="25"> segundos
-
-
-
-<br><br>
-
-
-<button onclick="calcular()">
-
-Calcular interpolación
-
-</button>
-
-
-
-
-<div id="resultado"></div>
-
-
-
-<canvas id="grafica"></canvas>
-
-
-
-</div>
-
-
-
-
-
-
-
-
-
 <script>
 
-
 let grafico;
-
 
 
 function calcular(){
 
 
+let datosT=[
+0,1,2,3,4,5,6,7,8,9,
+10,11,12,13,14,15,
+16,17,18,19,20,21,22,
+23,24,25,30,40,59,122
+];
 
-let t=[
 
-Number(document.getElementById("t1").value),
-
-Number(document.getElementById("t2").value),
-
-Number(document.getElementById("t3").value)
-
+let datosV=[
+0.000,0.000,0.390,0.840,1.290,
+1.630,1.960,2.300,2.530,2.750,
+2.970,3.140,3.310,3.480,3.650,
+3.760,3.870,3.930,3.980,4.040,
+4.150,4.210,4.270,4.320,4.380,
+4.430,4.550,4.710,4.830,4.830
 ];
 
 
 
-let V=[
+// tiempo solicitado
 
-Number(document.getElementById("v1").value),
-
-Number(document.getElementById("v2").value),
-
-Number(document.getElementById("v3").value)
-
-];
-
-
-
-let x=
-
+let x =
 Number(document.getElementById("tx").value);
 
 
 
 
+// Buscar los 3 nodos más cercanos
 
-// coeficientes Newton
+
+let indices=[];
+
+
+for(let i=0;i<datosT.length;i++){
+
+indices.push({
+
+indice:i,
+
+distancia:Math.abs(datosT[i]-x)
+
+});
+
+}
+
+
+
+indices.sort((a,b)=>a.distancia-b.distancia);
+
+
+
+
+let i1=indices[0].indice;
+let i2=indices[1].indice;
+let i3=indices[2].indice;
+
+
+
+let t=[
+
+datosT[i1],
+datosT[i2],
+datosT[i3]
+
+];
+
+
+let V=[
+
+datosV[i1],
+datosV[i2],
+datosV[i3]
+
+];
+
+
+
+// Ordenar nodos por tiempo
+
+for(let i=0;i<3;i++){
+
+for(let j=i+1;j<3;j++){
+
+if(t[i]>t[j]){
+
+let aux=t[i];
+t[i]=t[j];
+t[j]=aux;
+
+
+aux=V[i];
+V[i]=V[j];
+V[j]=aux;
+
+}
+
+}
+
+}
+
+
+
+
+// Newton segundo orden
 
 
 let b0=V[0];
@@ -369,7 +122,6 @@ let f12=(V[2]-V[1])/(t[2]-t[1]);
 
 
 let b2=(f12-b1)/(t[2]-t[0]);
-
 
 
 
@@ -388,8 +140,6 @@ b2*(x-t[0])*(x-t[1]);
 
 
 
-
-
 let resultado=P(x);
 
 
@@ -398,25 +148,29 @@ document.getElementById("resultado").innerHTML=
 
 `
 
-Voltaje estimado:
+<b>Resultado de interpolación</b>
+
+<br><br>
+
+Voltaje estimado en t=${x}s :
 
 ${resultado.toFixed(4)} V
 
 <br><br>
 
-Coeficientes:
+Nodos utilizados:
 
 <br>
 
-b0 = ${b0.toFixed(4)}
+(${t[0]}s , ${V[0]}V)
 
 <br>
 
-b1 = ${b1.toFixed(6)}
+(${t[1]}s , ${V[1]}V)
 
 <br>
 
-b2 = ${b2.toFixed(6)}
+(${t[2]}s , ${V[2]}V)
 
 `;
 
@@ -424,26 +178,26 @@ b2 = ${b2.toFixed(6)}
 
 
 
-
-// generar puntos de curva
-
-
-let puntos=[];
+// Crear curva interpolada cercana
 
 
-for(let i=15;i<=30;i+=0.5){
+let curva=[];
 
 
-puntos.push({
+for(let tiempo=0; tiempo<=60; tiempo+=0.5){
 
-x:i,
 
-y:P(i)
+curva.push({
+
+x:tiempo,
+
+y:P(tiempo)
 
 });
 
 
 }
+
 
 
 
@@ -464,7 +218,6 @@ document.getElementById("grafica"),
 
 {
 
-
 type:"line",
 
 
@@ -473,39 +226,35 @@ data:{
 
 datasets:[
 
+
 {
 
+label:"Curva interpolada Newton",
 
-label:"Polinomio de Newton",
+data:curva,
 
-data:puntos,
+borderWidth:3,
 
-borderWidth:2,
-
-fill:false
+pointRadius:0
 
 },
 
 
-
 {
 
+label:"Datos experimentales Arduino",
 
-label:"Nodos experimentales",
+data:datosT.map((t,i)=>({
 
-data:[
+x:t,
 
-{x:t[0],y:V[0]},
+y:datosV[i]
 
-{x:t[1],y:V[1]},
-
-{x:t[2],y:V[2]}
-
-],
+})),
 
 type:"scatter",
 
-pointRadius:6
+pointRadius:5
 
 },
 
@@ -513,20 +262,22 @@ pointRadius:6
 
 {
 
+label:"Voltaje calculado",
 
-label:"Punto interpolado",
+data:[{
 
-data:[
+x:x,
 
-{x:x,y:resultado}
+y:resultado
 
-],
+}],
 
 type:"scatter",
 
 pointRadius:8
 
 }
+
 
 
 ]
@@ -539,6 +290,9 @@ pointRadius:8
 options:{
 
 
+responsive:true,
+
+
 scales:{
 
 
@@ -547,12 +301,12 @@ x:{
 
 title:{
 
-
 display:true,
 
 text:"Tiempo (s)"
 
 }
+
 
 },
 
@@ -562,25 +316,30 @@ y:{
 
 title:{
 
-
 display:true,
 
-text:"Voltaje (V)"
+text:"Voltaje del capacitor (V)"
 
-}
-
-}
+},
 
 
-}
+min:0,
 
-
-
-}
+max:5
 
 
 }
 
+
+}
+
+
+
+}
+
+
+
+}
 
 
 );
@@ -591,10 +350,3 @@ text:"Voltaje (V)"
 
 
 </script>
-
-
-
-
-</body>
-
-</html>
