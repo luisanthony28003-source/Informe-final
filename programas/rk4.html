@@ -146,7 +146,6 @@ Simulación numérica de la descarga de un capacitor en un circuito RC mediante 
 
 
 
-
 <h2>
 Modelo matemático
 </h2>
@@ -154,14 +153,16 @@ Modelo matemático
 
 <p>
 
-La descarga del capacitor está descrita por:
+El comportamiento de descarga del capacitor está descrito por:
 
 </p>
 
 
 <h3>
 
-dV/dt = -V/(RC)
+\[
+\frac{dV}{dt}=-\frac{V}{RC}
+\]
 
 </h3>
 
@@ -171,6 +172,14 @@ dV/dt = -V/(RC)
 <h2>
 Parámetros del circuito
 </h2>
+
+
+
+<p>
+
+Ingrese los valores del circuito para realizar la simulación:
+
+</p>
 
 
 
@@ -243,7 +252,9 @@ Simular RK4
 
 
 
+
 <div id="resultado"></div>
+
 
 
 </div>
@@ -261,51 +272,40 @@ function calcular(){
 
 
 
-let V0=
-
-Number(document.getElementById("V0").value);
+let V0 = Number(document.getElementById("V0").value);
 
 
-
-let R=
-
-Number(document.getElementById("R").value);
+let R = Number(document.getElementById("R").value);
 
 
-
-let C=
-
-Number(document.getElementById("C").value);
+let C = Number(document.getElementById("C").value);
 
 
-
-let tf=
-
-Number(document.getElementById("tf").value);
+let tf = Number(document.getElementById("tf").value);
 
 
-
-let h=
-
-Number(document.getElementById("h").value);
+let h = Number(document.getElementById("h").value);
 
 
 
 
 
-let tau=R*C;
+// Constante de tiempo
+
+let tau = R*C;
+
 
 
 
 
 // Ecuación diferencial
 
-
 function f(t,V){
 
 return -V/tau;
 
 }
+
 
 
 
@@ -320,7 +320,14 @@ let voltaje=[];
 let V=V0;
 
 
+
+
+
+// Método RK4
+
+
 for(let t=0;t<=tf;t+=h){
+
 
 
 tiempo.push(t);
@@ -328,9 +335,6 @@ tiempo.push(t);
 
 voltaje.push(V);
 
-
-
-// RK4
 
 
 let k1=f(t,V);
@@ -341,7 +345,7 @@ let k2=f(
 
 t+h/2,
 
-V+h*k1/2
+V+(h/2)*k1
 
 );
 
@@ -351,7 +355,7 @@ let k3=f(
 
 t+h/2,
 
-V+h*k2/2
+V+(h/2)*k2
 
 );
 
@@ -367,13 +371,21 @@ V+h*k3
 
 
 
+
+
 V=
 
 V+
 
 (h/6)*(
 
-k1+2*k2+2*k3+k4
+k1+
+
+2*k2+
+
+2*k3+
+
+k4
 
 );
 
@@ -384,14 +396,18 @@ k1+2*k2+2*k3+k4
 
 
 
-// solución analítica
 
 
-function analitica(t){
+
+// Solución analítica
+
+function exacta(t){
 
 return V0*Math.exp(-t/tau);
 
 }
+
+
 
 
 
@@ -408,15 +424,31 @@ tabla+=`
 
 <tr>
 
-<td>${tiempo[i].toFixed(1)}</td>
+<td>
 
-<td>${voltaje[i].toFixed(4)}</td>
+${tiempo[i].toFixed(1)}
 
-<td>${analitica(tiempo[i]).toFixed(4)}</td>
+</td>
+
+
+<td>
+
+${voltaje[i].toFixed(4)}
+
+</td>
+
+
+<td>
+
+${exacta(tiempo[i]).toFixed(4)}
+
+</td>
+
 
 </tr>
 
 `;
+
 
 
 }
@@ -425,46 +457,28 @@ tabla+=`
 
 
 
-// comparación experimental
-
-
-let Vexp=4.710;
-
-
-
-let VRK=voltaje[1] || voltaje[0];
-
-
-
-let error=
-
-Math.abs(Vexp-VRK)/Vexp*100;
-
-
 
 
 
 document.getElementById("resultado").innerHTML=
 
-
-
 `
 
 <h2>
-Resultados de simulación
+Resultados de la simulación
 </h2>
 
 
 
 <p>
 
-Constante de tiempo:
+Constante de tiempo del circuito:
 
 <br>
 
 <b>
 
-τ = RC = ${tau.toFixed(2)} segundos
+τ = RC = ${tau.toFixed(3)} segundos
 
 </b>
 
@@ -472,9 +486,10 @@ Constante de tiempo:
 
 
 
+
 <p>
 
-El método RK4 resolvió la ecuación diferencial utilizando aproximaciones sucesivas de cuarto orden.
+El método RK4 aproxima la solución de la ecuación diferencial mediante cuatro pendientes calculadas en cada paso de integración.
 
 </p>
 
@@ -482,7 +497,7 @@ El método RK4 resolvió la ecuación diferencial utilizando aproximaciones suce
 
 
 <h2>
-Comparación RK4 - Solución analítica
+Comparación RK4 y solución analítica
 </h2>
 
 
@@ -493,19 +508,22 @@ Comparación RK4 - Solución analítica
 <tr>
 
 <th>
-Tiempo(s)
+Tiempo (s)
 
 </th>
+
 
 <th>
-RK4(V)
+RK4 (V)
 
 </th>
+
 
 <th>
-Analítica(V)
+Modelo exacto (V)
 
 </th>
+
 
 </tr>
 
@@ -518,87 +536,6 @@ ${tabla}
 
 
 
-<h2>
-Validación experimental
-</h2>
-
-
-
-<p>
-
-Comparación en t = 2 segundos:
-
-</p>
-
-
-
-<table>
-
-
-<tr>
-
-<th>
-Método
-
-</th>
-
-<th>
-Voltaje
-
-</th>
-
-</tr>
-
-
-<tr>
-
-<td>
-RK4
-
-</td>
-
-<td>
-${VRK.toFixed(4)} V
-
-</td>
-
-</tr>
-
-
-
-<tr>
-
-<td>
-Arduino
-
-</td>
-
-<td>
-4.710 V
-
-</td>
-
-</tr>
-
-
-</table>
-
-
-
-<p>
-
-Error relativo aproximado:
-
-<b>
-
-${error.toFixed(3)} %
-
-</b>
-
-</p>
-
-
-
 
 <h2>
 Interpretación física
@@ -608,15 +545,25 @@ Interpretación física
 
 <p>
 
-El método RK4 permite predecir la evolución del voltaje del capacitor durante la descarga sin resolver directamente la ecuación diferencial de forma analítica.
+El método Runge-Kutta de cuarto orden permite obtener la evolución temporal del voltaje del capacitor durante la descarga sin utilizar directamente la solución analítica.
 
 </p>
 
 
 
+
 <p>
 
-La cercanía entre la solución RK4, la solución exacta y las mediciones experimentales demuestra la utilidad de los métodos numéricos en sistemas electrónicos reales.
+La comparación entre RK4 y la solución exacta permite observar que el método numérico reproduce adecuadamente el comportamiento exponencial característico de un circuito RC.
+
+</p>
+
+
+
+
+<p>
+
+Las diferencias que pueden existir respecto a las mediciones experimentales dependen de factores reales como la tolerancia del resistor, variación de capacitancia y resolución del sistema de adquisición Arduino.
 
 </p>
 
