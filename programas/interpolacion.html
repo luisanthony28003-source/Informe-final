@@ -47,7 +47,6 @@ box-shadow:0px 5px 15px #ccc;
 }
 
 
-
 input{
 
 padding:8px;
@@ -148,7 +147,7 @@ Interpolación de Newton de Segundo Orden
 
 <p>
 
-Estimación del voltaje del capacitor utilizando datos experimentales obtenidos mediante Arduino.
+Estimación del voltaje del capacitor utilizando datos experimentales obtenidos durante la carga del circuito RC.
 
 </p>
 
@@ -161,7 +160,7 @@ Fundamento del método
 
 <p>
 
-La interpolación de Newton permite estimar valores intermedios mediante un polinomio construido a partir de nodos experimentales conocidos.
+La interpolación de Newton permite aproximar valores desconocidos mediante un polinomio construido a partir de nodos experimentales conocidos.
 
 </p>
 
@@ -177,7 +176,7 @@ P(x)=b0+b1(x-t0)+b2(x-t0)(x-t1)
 
 
 <h2>
-Datos experimentales utilizados
+Nodos utilizados
 </h2>
 
 
@@ -284,7 +283,7 @@ let V=[3.760,4.150,4.550];
 
 
 
-// tiempo buscado
+// Tiempo donde se desea estimar
 
 let x=
 
@@ -293,7 +292,7 @@ Number(document.getElementById("tiempo").value);
 
 
 
-// coeficientes Newton
+// Coeficientes de Newton
 
 
 let b0=V[0];
@@ -331,7 +330,7 @@ let b2=
 
 
 
-// evaluación del polinomio
+// Evaluación del polinomio
 
 
 let resultado=
@@ -350,23 +349,6 @@ b2*(x-t[0])*(x-t[1]);
 
 
 
-// valor experimental del informe
-
-
-let experimental=4.430;
-
-
-
-
-let error=
-
-Math.abs(experimental-resultado)
-
-/
-
-experimental*100;
-
-
 
 
 
@@ -377,8 +359,9 @@ document.getElementById("resultado").innerHTML=
 `
 
 <h2>
-Resultado obtenido
+Resultado de la interpolación
 </h2>
+
 
 
 <p>
@@ -395,9 +378,11 @@ t = ${x} segundos
 
 <br>
 
-se utilizaron los nodos experimentales:
+se utilizaron los siguientes nodos experimentales:
 
 </p>
+
+
 
 
 
@@ -465,9 +450,9 @@ Voltaje
 
 <h3>
 
-Voltaje interpolado:
+Voltaje estimado:
 
-<br>
+<br><br>
 
 ${resultado.toFixed(4)} V
 
@@ -482,35 +467,14 @@ ${resultado.toFixed(4)} V
 
 
 <h3>
-Validación experimental
+Interpretación del resultado
 </h3>
 
 
 
 <p>
 
-Voltaje medido mediante Arduino:
-
-<br>
-
-${experimental.toFixed(3)} V
-
-</p>
-
-
-
-
-<p>
-
-Error relativo:
-
-<br>
-
-<b>
-
-${error.toFixed(3)} %
-
-</b>
+El polinomio de Newton de segundo orden permite obtener una aproximación del voltaje del capacitor en un instante donde no existe una medición directa.
 
 </p>
 
@@ -518,7 +482,7 @@ ${error.toFixed(3)} %
 
 <p>
 
-El resultado demuestra que el polinomio de Newton de segundo orden permite aproximar correctamente el comportamiento del capacitor en el intervalo analizado.
+El valor calculado representa una estimación basada en la tendencia de los datos experimentales cercanos al punto analizado.
 
 </p>
 
