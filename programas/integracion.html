@@ -6,14 +6,16 @@
 
 <meta charset="UTF-8">
 
-<title>Integración Numérica RC</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Integración Numérica - Circuito RC</title>
 
 
 <style>
 
 body{
 
-font-family:Arial;
+font-family:Arial,sans-serif;
 
 background:#f4f6f8;
 
@@ -26,7 +28,7 @@ text-align:center;
 
 background:white;
 
-width:850px;
+width:900px;
 
 max-width:90%;
 
@@ -41,9 +43,20 @@ box-shadow:0px 5px 15px #ccc;
 }
 
 
-button{
 
-padding:12px 25px;
+input{
+
+padding:8px;
+
+width:120px;
+
+margin:5px;
+
+}
+
+
+
+button{
 
 background:#00509e;
 
@@ -51,9 +64,19 @@ color:white;
 
 border:none;
 
+padding:12px 25px;
+
 border-radius:20px;
 
 cursor:pointer;
+
+}
+
+
+
+button:hover{
+
+background:#003f7d;
 
 }
 
@@ -85,7 +108,13 @@ text-align:left;
 
 line-height:1.7;
 
-margin-top:25px;
+}
+
+
+
+h1,h2{
+
+color:#00509e;
 
 }
 
@@ -100,28 +129,32 @@ margin-top:25px;
 <body>
 
 
-
 <div class="card">
 
 
-
 <h1>
-Integración Numérica
+Integración Numérica mediante Regla del Trapecio
 </h1>
-
-
-
-<h2>
-Regla del Trapecio Compuesta
-</h2>
 
 
 
 <p>
 
-La integración numérica permite calcular el área bajo una curva cuando solamente se tienen datos experimentales discretos.
+Cálculo del área bajo la curva de voltaje durante la carga del capacitor RC utilizando datos experimentales.
 
-En este caso se calcula la energía acumulada representada mediante la integral del voltaje del capacitor durante la carga.
+</p>
+
+
+
+
+<h2>
+Fundamento del método
+</h2>
+
+
+<p>
+
+La regla del trapecio aproxima la integral mediante la suma de pequeñas áreas trapezoidales entre puntos experimentales.
 
 </p>
 
@@ -129,47 +162,43 @@ En este caso se calcula la energía acumulada representada mediante la integral 
 
 <h3>
 
-A = Σ ((V<sub>i</sub> + V<sub>i-1</sub>)/2) Δt
+A ≈ Σ ((Vᵢ+Vᵢ₊₁)/2)(tᵢ₊₁-tᵢ)
 
 </h3>
 
 
 
 
-<h3>
-Datos experimentales utilizados
-</h3>
+<h2>
+Seleccione el intervalo de análisis
+</h2>
+
+
+Tiempo inicial:
+
+<br>
+
+<input id="inicio" type="number" value="0">
+
+
+s
+
+
+<br>
+
+
+Tiempo final:
+
+<br>
+
+<input id="fin" type="number" value="60">
+
+
+s
 
 
 
-<table>
-
-
-<tr>
-
-<th>
-Tiempo (s)
-</th>
-
-<th>
-Voltaje (V)
-</th>
-
-</tr>
-
-
-<tr><td>0</td><td>0.000</td></tr>
-<tr><td>2</td><td>0.390</td></tr>
-<tr><td>5</td><td>1.630</td></tr>
-<tr><td>10</td><td>2.970</td></tr>
-<tr><td>20</td><td>4.150</td></tr>
-<tr><td>30</td><td>4.550</td></tr>
-<tr><td>60</td><td>4.830</td></tr>
-
-
-</table>
-
-
+<br><br>
 
 
 <button onclick="calcular()">
@@ -180,8 +209,8 @@ Calcular integral
 
 
 
-<div id="resultado"></div>
 
+<div id="resultado"></div>
 
 
 
@@ -201,21 +230,20 @@ function calcular(){
 
 
 
+// Datos experimentales carga RC
+
+
 let t=[
 
-0,
+0,1,2,3,4,5,6,7,8,9,
 
-2,
+10,11,12,13,14,15,
 
-5,
+16,17,18,19,20,
 
-10,
+21,22,23,24,25,
 
-20,
-
-30,
-
-60
+30,40,59,122
 
 ];
 
@@ -223,21 +251,34 @@ let t=[
 
 let V=[
 
-0.000,
+0.000,0.000,0.390,0.840,1.290,
 
-0.390,
+1.630,1.960,2.300,2.530,2.750,
 
-1.630,
+2.970,3.140,3.310,3.480,3.650,
 
-2.970,
+3.760,3.870,3.930,3.980,4.040,
 
-4.150,
+4.150,4.210,4.270,4.320,4.380,
 
-4.550,
-
-4.830
+4.430,4.550,4.710,4.830,4.830
 
 ];
+
+
+
+
+// intervalo elegido
+
+
+let inicio=
+
+Number(document.getElementById("inicio").value);
+
+
+let fin=
+
+Number(document.getElementById("fin").value);
 
 
 
@@ -246,47 +287,47 @@ let V=[
 let area=0;
 
 
+let tabla="";
 
-let detalle="";
-
-
-
+let puntos=0;
 
 
 
-for(let i=1;i<t.length;i++){
+
+for(let i=0;i<t.length-1;i++){
 
 
 
-let h=t[i]-t[i-1];
+if(t[i]>=inicio && t[i+1]<=fin){
 
 
 
-let areaParcial=
-
-((V[i]+V[i-1])*h)/2;
+let h=t[i+1]-t[i];
 
 
+let trapecio=
 
-area+=areaParcial;
+((V[i]+V[i+1])/2)*h;
 
 
 
-detalle+=
+area+=trapecio;
 
-`
 
-<b>Intervalo ${t[i-1]} s a ${t[i]} s</b>
 
-<br>
+puntos++;
 
-Δt = ${h} s
 
-<br>
 
-Área parcial = ${areaParcial.toFixed(4)} V·s
+tabla+=`
 
-<br><br>
+<tr>
+
+<td>${t[i]} - ${t[i+1]}</td>
+
+<td>${trapecio.toFixed(4)}</td>
+
+</tr>
 
 `;
 
@@ -296,61 +337,19 @@ detalle+=
 
 
 
+}
 
+
+
+
+
+let tiempoTotal=fin-inicio;
 
 
 
 let promedio=
 
-area/60;
-
-
-
-
-
-// Modelo teorico
-
-
-let Vmax=4.830;
-
-
-let tau=10;
-
-
-
-let integralTeorica=
-
-Vmax*
-
-(
-
-60+
-
-tau*Math.exp(-60/tau)
-
--tau
-
-);
-
-
-
-
-let promedioTeorico=
-
-integralTeorica/60;
-
-
-
-
-
-let error=
-
-Math.abs(promedio-promedioTeorico)
-
-/
-
-promedioTeorico*100;
-
+area/tiempoTotal;
 
 
 
@@ -363,24 +362,31 @@ document.getElementById("resultado").innerHTML=
 `
 
 <h2>
-
-Resultados obtenidos
-
+Resultado obtenido
 </h2>
 
 
 
 <p>
 
-El área calculada mediante la suma de trapecios representa la integral aproximada del voltaje del capacitor durante los primeros 60 segundos.
+Intervalo analizado:
+
+<br>
+
+<b>
+
+${inicio}s hasta ${fin}s
+
+</b>
 
 </p>
 
 
 
+
 <h3>
 
-Área total:
+Área bajo la curva:
 
 <br>
 
@@ -391,66 +397,86 @@ ${area.toFixed(4)} V·s
 
 
 
-<p>
-
-Voltaje promedio experimental:
-
-<br>
-
-<b>${promedio.toFixed(4)} V</b>
-
-
-</p>
-
-
-
-
-<p>
-
-Voltaje promedio teórico:
-
-<br>
-
-${promedioTeorico.toFixed(4)} V
-
-</p>
-
-
-
-
-<p>
-
-Error relativo:
-
-<br>
-
-<b>${error.toFixed(3)} %</b>
-
-</p>
-
-
-
-<hr>
-
-
-
 <h3>
 
-Cálculo de áreas parciales
+Voltaje promedio:
+
+<br>
+
+${promedio.toFixed(4)} V
 
 </h3>
 
 
 
-${detalle}
+
+<p>
+
+Número de trapecios utilizados:
+
+<b>
+
+${puntos}
+
+</b>
+
+</p>
+
+
+
+
+<h2>
+Áreas parciales calculadas
+</h2>
+
+
+
+<table>
+
+
+<tr>
+
+<th>
+Intervalo de tiempo
+
+</th>
+
+<th>
+Área del trapecio (V·s)
+
+</th>
+
+</tr>
+
+
+${tabla}
+
+
+</table>
+
+
+
+
+<h2>
+Interpretación física
+</h2>
 
 
 
 <p>
 
-El bajo error obtenido indica que la regla del trapecio permite aproximar adecuadamente la evolución temporal del voltaje del capacitor usando únicamente mediciones discretas.
+La integral del voltaje representa la acumulación temporal de la señal del capacitor durante el proceso de carga.
 
 </p>
+
+
+
+<p>
+
+Un área mayor indica que el capacitor permaneció durante más tiempo con valores elevados de voltaje, acercándose al estado estable del circuito RC.
+
+</p>
+
 
 
 `;
