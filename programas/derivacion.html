@@ -6,7 +6,7 @@
 
 <meta charset="UTF-8">
 
-<title>Integración Numérica RC</title>
+<title>Derivación Numérica RC</title>
 
 
 <style>
@@ -37,6 +37,17 @@ padding:30px;
 border-radius:15px;
 
 box-shadow:0px 5px 15px #ccc;
+
+}
+
+
+input{
+
+padding:8px;
+
+width:100px;
+
+margin:5px;
 
 }
 
@@ -106,22 +117,22 @@ margin-top:25px;
 
 
 <h1>
-Integración Numérica
+Derivación Numérica
 </h1>
 
 
 
 <h2>
-Regla del Trapecio Compuesta
+Método de Diferencias Centradas
 </h2>
 
 
 
 <p>
 
-La integración numérica permite calcular el área bajo una curva cuando solamente se tienen datos experimentales discretos.
+La derivación numérica permite estimar la rapidez de cambio de una variable cuando solo se dispone de datos experimentales discretos.
 
-En este caso se calcula la energía acumulada representada mediante la integral del voltaje del capacitor durante la carga.
+En este caso se determina la variación del voltaje del capacitor respecto al tiempo.
 
 </p>
 
@@ -129,7 +140,10 @@ En este caso se calcula la energía acumulada representada mediante la integral 
 
 <h3>
 
-A = Σ ((V<sub>i</sub> + V<sub>i-1</sub>)/2) Δt
+\[
+\frac{dV}{dt}\approx
+\frac{V(t+h)-V(t-h)}{2h}
+\]
 
 </h3>
 
@@ -137,7 +151,7 @@ A = Σ ((V<sub>i</sub> + V<sub>i-1</sub>)/2) Δt
 
 
 <h3>
-Datos experimentales utilizados
+Datos utilizados
 </h3>
 
 
@@ -148,40 +162,63 @@ Datos experimentales utilizados
 <tr>
 
 <th>
-Tiempo (s)
+Tiempo
 </th>
 
 <th>
-Voltaje (V)
+Voltaje
 </th>
 
 </tr>
 
 
-<tr><td>0</td><td>0.000</td></tr>
-<tr><td>2</td><td>0.390</td></tr>
-<tr><td>5</td><td>1.630</td></tr>
-<tr><td>10</td><td>2.970</td></tr>
-<tr><td>20</td><td>4.150</td></tr>
-<tr><td>30</td><td>4.550</td></tr>
-<tr><td>60</td><td>4.830</td></tr>
+<tr>
+<td>20 s</td>
+<td>4.150 V</td>
+</tr>
+
+
+<tr>
+<td>30 s</td>
+<td>4.550 V</td>
+</tr>
+
+
+<tr>
+<td>40 s</td>
+<td>4.710 V</td>
+</tr>
 
 
 </table>
 
 
 
+<h3>
+Punto donde calcular derivada
+</h3>
+
+
+
+<input id="tiempo" value="30">
+
+segundos
+
+
+
+<br><br>
+
+
 
 <button onclick="calcular()">
 
-Calcular integral
+Calcular derivada
 
 </button>
 
 
 
 <div id="resultado"></div>
-
 
 
 
@@ -193,122 +230,45 @@ Calcular integral
 
 
 
-<script>
 
+
+<script>
 
 
 function calcular(){
 
 
 
-let t=[
+let t=Number(document.getElementById("tiempo").value);
 
-0,
 
-2,
 
-5,
+let h=10;
 
-10,
 
-20,
 
-30,
+let Vanterior=4.150;
 
-60
 
-];
+let Vposterior=4.710;
 
 
 
-let V=[
 
-0.000,
 
-0.390,
+// Diferencia centrada
 
-1.630,
 
-2.970,
+let derivada=
 
-4.150,
+(Vposterior-Vanterior)/(2*h);
 
-4.550,
 
-4.830
 
-];
 
 
 
-
-
-let area=0;
-
-
-
-let detalle="";
-
-
-
-
-
-
-for(let i=1;i<t.length;i++){
-
-
-
-let h=t[i]-t[i-1];
-
-
-
-let areaParcial=
-
-((V[i]+V[i-1])*h)/2;
-
-
-
-area+=areaParcial;
-
-
-
-detalle+=
-
-`
-
-<b>Intervalo ${t[i-1]} s a ${t[i]} s</b>
-
-<br>
-
-Δt = ${h} s
-
-<br>
-
-Área parcial = ${areaParcial.toFixed(4)} V·s
-
-<br><br>
-
-`;
-
-
-
-}
-
-
-
-
-
-
-
-let promedio=
-
-area/60;
-
-
-
-
-
-// Modelo teorico
+// Valor teorico del modelo RC
 
 
 let Vmax=4.830;
@@ -318,26 +278,11 @@ let tau=10;
 
 
 
-let integralTeorica=
 
-Vmax*
+let derivadaTeorica=
 
-(
+(Vmax/tau)*Math.exp(-30/tau);
 
-60+
-
-tau*Math.exp(-60/tau)
-
--tau
-
-);
-
-
-
-
-let promedioTeorico=
-
-integralTeorica/60;
 
 
 
@@ -345,12 +290,11 @@ integralTeorica/60;
 
 let error=
 
-Math.abs(promedio-promedioTeorico)
+Math.abs(derivadaTeorica-derivada)
 
 /
 
-promedioTeorico*100;
-
+derivadaTeorica*100;
 
 
 
@@ -359,12 +303,11 @@ promedioTeorico*100;
 
 document.getElementById("resultado").innerHTML=
 
-
 `
 
 <h2>
 
-Resultados obtenidos
+Resultado obtenido
 
 </h2>
 
@@ -372,7 +315,18 @@ Resultados obtenidos
 
 <p>
 
-El área calculada mediante la suma de trapecios representa la integral aproximada del voltaje del capacitor durante los primeros 60 segundos.
+Para calcular la derivada en:
+
+<br>
+
+<b>
+
+t = ${t} segundos
+
+</b>
+
+
+se utilizan los valores experimentales ubicados antes y después del punto analizado.
 
 </p>
 
@@ -380,11 +334,11 @@ El área calculada mediante la suma de trapecios representa la integral aproxima
 
 <h3>
 
-Área total:
+Derivada numérica:
 
 <br>
 
-${area.toFixed(4)} V·s
+${derivada.toFixed(5)} V/s
 
 </h3>
 
@@ -393,25 +347,42 @@ ${area.toFixed(4)} V·s
 
 <p>
 
-Voltaje promedio experimental:
+Esto indica que en ese instante el voltaje del capacitor aumenta aproximadamente:
 
 <br>
 
-<b>${promedio.toFixed(4)} V</b>
+<b>
 
+${derivada.toFixed(5)} voltios por segundo
+
+</b>
 
 </p>
 
 
 
 
+<hr>
+
+
+
+
+<h3>
+
+Validación experimental
+
+</h3>
+
+
+
 <p>
 
-Voltaje promedio teórico:
+Derivada obtenida del modelo matemático RC:
 
 <br>
 
-${promedioTeorico.toFixed(4)} V
+${derivadaTeorica.toFixed(5)} V/s
+
 
 </p>
 
@@ -424,31 +395,22 @@ Error relativo:
 
 <br>
 
-<b>${error.toFixed(3)} %</b>
+<b>
+
+${error.toFixed(3)} %
+
+</b>
 
 </p>
 
 
 
-<hr>
-
-
-
-<h3>
-
-Cálculo de áreas parciales
-
-</h3>
-
-
-
-${detalle}
-
-
 
 <p>
 
-El bajo error obtenido indica que la regla del trapecio permite aproximar adecuadamente la evolución temporal del voltaje del capacitor usando únicamente mediciones discretas.
+La diferencia entre ambos valores se debe principalmente a las tolerancias del resistor, capacitor y al error de medición del sistema Arduino.
+
+El método de diferencias centradas permite obtener una aproximación adecuada utilizando únicamente datos experimentales.
 
 </p>
 
@@ -462,6 +424,7 @@ El bajo error obtenido indica que la regla del trapecio permite aproximar adecua
 
 
 </script>
+
 
 
 
