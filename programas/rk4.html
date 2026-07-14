@@ -6,14 +6,10 @@
 
 <meta charset="UTF-8">
 
-<title>Runge Kutta RK4 Circuito RC</title>
-
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>Runge-Kutta RC</title>
 
 
 <style>
-
 
 body{
 
@@ -23,19 +19,6 @@ background:#f4f6f8;
 
 text-align:center;
 
-margin:0;
-
-}
-
-
-header{
-
-background:#003366;
-
-color:white;
-
-padding:25px;
-
 }
 
 
@@ -43,11 +26,11 @@ padding:25px;
 
 background:white;
 
-width:950px;
+width:850px;
 
 max-width:90%;
 
-margin:30px auto;
+margin:40px auto;
 
 padding:30px;
 
@@ -60,9 +43,9 @@ box-shadow:0px 5px 15px #ccc;
 
 input{
 
-width:100px;
-
 padding:8px;
+
+width:120px;
 
 margin:5px;
 
@@ -80,7 +63,7 @@ color:white;
 
 border:none;
 
-border-radius:25px;
+border-radius:20px;
 
 cursor:pointer;
 
@@ -98,11 +81,11 @@ border-collapse:collapse;
 
 
 
-td,th{
+th,td{
 
 border:1px solid #aaa;
 
-padding:8px;
+padding:8px 15px;
 
 }
 
@@ -110,11 +93,11 @@ padding:8px;
 
 #resultado{
 
-margin:20px;
+text-align:left;
 
-font-size:18px;
+line-height:1.7;
 
-color:#003366;
+margin-top:25px;
 
 }
 
@@ -126,47 +109,42 @@ color:#003366;
 
 
 
-
 <body>
-
-
-
-
-<header>
-
-
-<h1>
-Método Runge-Kutta de Cuarto Orden (RK4)
-</h1>
-
-
-<p>
-Simulación numérica de la descarga de un capacitor en un circuito RC
-</p>
-
-
-</header>
-
-
-
 
 
 
 <div class="card">
 
 
+
+<h1>
+Runge-Kutta de Cuarto Orden
+</h1>
+
+
+
 <h2>
-Fundamento del método
+Simulación de descarga del capacitor RC
 </h2>
+
 
 
 <p>
 
-El método RK4 permite resolver ecuaciones diferenciales mediante cuatro aproximaciones sucesivas de la pendiente.
+El método Runge-Kutta de cuarto orden permite resolver ecuaciones diferenciales ordinarias mediante aproximaciones sucesivas.
 
-Para la descarga del capacitor:
+En este caso se utiliza para simular la descarga de un capacitor.
 
 </p>
+
+
+
+
+<h3>
+
+Ecuación diferencial:
+
+</h3>
 
 
 <h3>
@@ -176,51 +154,70 @@ dV/dt = -V/(RC)
 </h3>
 
 
+
 <p>
 
-La solución numérica se compara con mediciones obtenidas mediante Arduino.
+La solución se obtiene calculando cuatro pendientes en cada intervalo de tiempo:
 
 </p>
 
 
 
-<h2>
+<h3>
+
+V<sub>n+1</sub>=V<sub>n</sub>+
+(h/6)(k1+2k2+2k3+k4)
+
+</h3>
+
+
+
+
+<h3>
 Parámetros del circuito
-</h2>
+</h3>
 
 
 
-R(Ω)
+Resistencia:
 
 <input id="R" value="10000">
 
+Ω
+
 
 <br>
 
 
-C(F)
+Capacitancia:
 
 <input id="C" value="0.001">
 
+F
+
 
 <br>
 
 
-Voltaje inicial(V)
+Voltaje inicial:
 
 <input id="V0" value="4.830">
 
+V
+
 
 <br>
 
 
-Paso h(s)
+Paso de tiempo:
 
 <input id="h" value="2">
 
+s
 
 
 <br><br>
+
 
 
 
@@ -232,36 +229,7 @@ Ejecutar RK4
 
 
 
-
 <div id="resultado"></div>
-
-
-
-
-<canvas id="grafica"></canvas>
-
-
-
-<h2>
-Resultados RK4
-</h2>
-
-
-<table id="tabla">
-
-<tr>
-
-<th>
-Tiempo(s)
-</th>
-
-<th>
-Voltaje RK4(V)
-</th>
-
-</tr>
-
-</table>
 
 
 
@@ -273,13 +241,7 @@ Voltaje RK4(V)
 
 
 
-
-
 <script>
-
-
-
-let grafico;
 
 
 
@@ -311,21 +273,31 @@ Number(document.getElementById("h").value);
 
 
 
+
+
 let tau=R*C;
 
 
 
-let tf=60;
+let tiempo=0;
 
 
 
+let V=V0;
 
-// ecuacion diferencial
+
+
+let resultados="";
+
+
+
 
 
 function f(t,V){
 
+
 return -V/tau;
+
 
 }
 
@@ -333,48 +305,26 @@ return -V/tau;
 
 
 
+let Vexperimental=4.710;
 
-let tiempo=[];
-
-let V=[];
-
-
-
-tiempo.push(0);
-
-V.push(V0);
+let Vcalculado=0;
 
 
 
 
-
-while(tiempo[tiempo.length-1]<tf){
-
-
-
-let t=
-
-tiempo[tiempo.length-1];
+for(let i=0;i<30;i++){
 
 
 
-let y=
-
-V[V.length-1];
-
-
-
-
-
-let k1=f(t,y);
+let k1=f(tiempo,V);
 
 
 
 let k2=f(
 
-t+h/2,
+tiempo+h/2,
 
-y+h*k1/2
+V+(h/2)*k1
 
 );
 
@@ -382,9 +332,9 @@ y+h*k1/2
 
 let k3=f(
 
-t+h/2,
+tiempo+h/2,
 
-y+h*k2/2
+V+(h/2)*k2
 
 );
 
@@ -392,9 +342,9 @@ y+h*k2/2
 
 let k4=f(
 
-t+h,
+tiempo+h,
 
-y+h*k3
+V+h*k3
 
 );
 
@@ -402,11 +352,9 @@ y+h*k3
 
 
 
-let ynuevo=
+V=
 
-y+
-
-(h/6)*(
+V+(h/6)*(
 
 k1+
 
@@ -421,9 +369,40 @@ k4
 
 
 
-tiempo.push(t+h);
+tiempo+=h;
 
-V.push(ynuevo);
+
+
+
+
+
+if(i<10){
+
+
+resultados+=
+
+`
+
+<tr>
+
+<td>${tiempo}</td>
+
+<td>${V.toFixed(4)}</td>
+
+</tr>
+
+`;
+
+
+}
+
+
+
+if(tiempo==2){
+
+Vcalculado=V;
+
+}
 
 
 
@@ -433,156 +412,16 @@ V.push(ynuevo);
 
 
 
-
-
-// datos reales Arduino descarga
-
-
-let tReal=[
-
-0,1,2,3,4,5,6,7,8,9,
-
-10,11,12,13,14,15,
-
-16,17,18,19,21,23,
-
-25,27,29,31,35,
-
-45,50,60
-
-];
-
-
-
-
-let VReal=[
-
-4.830,
-
-4.830,
-
-4.710,
-
-4.550,
-
-4.490,
-
-4.150,
-
-3.820,
-
-3.540,
-
-3.260,
-
-3.030,
-
-2.810,
-
-2.580,
-
-2.410,
-
-2.240,
-
-2.080,
-
-1.910,
-
-1.800,
-
-1.630,
-
-1.520,
-
-1.460,
-
-1.230,
-
-1.010,
-
-0.840,
-
-0.730,
-
-0.670,
-
-0.560,
-
-0.390,
-
-0.110,
-
-0,
-
-0
-
-];
-
-
-
-
-
-// tabla
-
-
-let tabla=document.getElementById("tabla");
-
-tabla.innerHTML=
-
-`
-
-<tr>
-
-<th>Tiempo(s)</th>
-
-<th>Voltaje RK4(V)</th>
-
-</tr>
-
-`;
-
-
-
-
-for(let i=0;i<tiempo.length;i++){
-
-
-
-tabla.innerHTML+=
-
-`
-
-<tr>
-
-<td>${tiempo[i].toFixed(0)}</td>
-
-<td>${V[i].toFixed(4)}</td>
-
-</tr>
-
-`;
-
-
-
-}
-
-
-
-
-
-
-
-// error comparando primer punto medido en 2s
 
 
 let error=
 
-Math.abs(VReal[2]-V[1])
+Math.abs(Vexperimental-Vcalculado)
 
 /
 
-VReal[2]*100;
+Vexperimental*100;
+
 
 
 
@@ -591,206 +430,122 @@ VReal[2]*100;
 
 document.getElementById("resultado").innerHTML=
 
+
 `
 
-<h3>Resultados</h3>
+<h2>
+
+Resultados de simulación
+
+</h2>
 
 
-Constante de tiempo:
 
-<b>${tau.toFixed(2)} segundos</b>
+<p>
+
+La simulación resuelve numéricamente la ecuación diferencial de descarga del capacitor utilizando el método RK4.
+
+</p>
 
 
-<br><br>
+
+<table>
+
+<tr>
+
+<th>
+
+Tiempo (s)
+
+</th>
 
 
-Voltaje RK4 en 2s:
+<th>
 
-${V[1].toFixed(4)} V
+Voltaje RK4 (V)
 
+</th>
+
+
+</tr>
+
+
+${resultados}
+
+
+</table>
+
+
+
+<hr>
+
+
+
+<h3>
+
+Validación experimental
+
+</h3>
+
+
+
+
+<p>
+
+Voltaje calculado por RK4 en t=2s:
 
 <br>
 
+<b>
 
-Voltaje experimental:
+${Vcalculado.toFixed(4)} V
 
-${VReal[2]} V
+</b>
 
+
+</p>
+
+
+
+<p>
+
+Voltaje experimental Arduino:
 
 <br>
 
+${Vexperimental.toFixed(4)} V
+
+</p>
+
+
+
+
+<p>
 
 Error relativo:
 
+<br>
+
+<b>
+
 ${error.toFixed(3)} %
 
+</b>
+
+
+</p>
+
+
+
+
+<p>
+
+El método RK4 permite reproducir el comportamiento dinámico de descarga del capacitor con alta precisión, debido a que considera varias aproximaciones de la pendiente dentro de cada intervalo de tiempo.
+
+</p>
+
+
 `;
-
-
-
-
-
-
-
-
-// curva analitica
-
-
-let analitica=[];
-
-
-
-for(let i=0;i<=60;i++){
-
-
-analitica.push({
-
-x:i,
-
-y:V0*Math.exp(-i/tau)
-
-});
-
-
-}
-
-
-
-
-
-if(grafico){
-
-grafico.destroy();
-
-}
-
-
-
-
-grafico=new Chart(
-
-document.getElementById("grafica"),
-
-{
-
-
-type:"line",
-
-
-data:{
-
-
-datasets:[
-
-
-
-{
-
-label:"Solución RK4",
-
-data:tiempo.map((x,i)=>({
-
-x:x,
-
-y:V[i]
-
-})),
-
-borderWidth:3
-
-},
-
-
-
-
-{
-
-label:"Solución analítica",
-
-data:analitica,
-
-borderWidth:2
-
-},
-
-
-
-
-{
-
-label:"Datos Arduino",
-
-data:tReal.map((x,i)=>({
-
-x:x,
-
-y:VReal[i]
-
-})),
-
-type:"scatter",
-
-pointRadius:5
-
-}
-
-
-
-]
-
-
-},
-
-
-
-options:{
-
-
-scales:{
-
-
-x:{
-
-title:{
-
-display:true,
-
-text:"Tiempo(s)"
-
-}
-
-},
-
-
-y:{
-
-title:{
-
-display:true,
-
-text:"Voltaje(V)"
-
-},
-
-min:0,
-
-max:5
-
-}
-
-
-}
-
-
-}
-
-
-
-}
-
-
-
-);
 
 
 
